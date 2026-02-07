@@ -309,6 +309,6 @@ This project aims to build a backend system that allows users to connect their e
 > **Strict Policy:** No code is written without a failing test.
 
 1. **Interface Definition:** Define `Service` and `Repository` interfaces in domain layer.
-2. **Mock Generation:** Use `mockery` or `gomock` to generate mocks.
+2. **Mock Generation:** Use `gomock` to generate mocks.
 3. **Unit Tests:** Write tests ensuring >80% coverage.
 4. **Implementation:** Write the SFF code to pass the tests.

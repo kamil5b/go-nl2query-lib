@@ -18,7 +18,7 @@ The project follows **Domain-Driven Design (DDD)** and **Single-Function File (S
 
 ### Tech Stack
 
-* **Language:** Go 1.21+
+* **Language:** Go 1.25+
 * **Task Queue:** Asynq (Redis-backed)
 * **Security:** BLAKE3 Hashing & Encryption
 * **Patterns:** Dependency Injection, Strategy Pattern (for swappable providers)
@@ -34,7 +34,7 @@ The project follows **Domain-Driven Design (DDD)** and **Single-Function File (S
 │   ├── app/                # Use cases (Single-function files)
 │   ├── infrastructure/     # SQL, VectorDB, and LLM implementations
 │   └── worker/             # Background ingestion handlers
-├── mocks/                  # Mockery generated files for TDD
+├── mocks/                  # Gomock generated files for TDD
 └── docker-compose.yaml     # Local development environment
 
 ```
