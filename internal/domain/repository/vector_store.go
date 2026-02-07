@@ -1,4 +1,4 @@
-package service
+package repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/kamil5b/go-nl-sql/internal/domain/model"
 )
 
-type VectorStore interface {
+type VectorStoreRepository interface {
 	Upsert(ctx context.Context, tenantID string, vectors []model.Vector) error
 	Search(ctx context.Context, tenantID string, queryEmbedding []float32, limit int) ([]model.Vector, error)
 	Delete(ctx context.Context, tenantID string) error

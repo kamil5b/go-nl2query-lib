@@ -1,6 +1,7 @@
 package model
 
 type DatabaseMetadata struct {
+	TenantID  string // Hashed Client's DB URL
 	Tables    []Table
 	Relations []Relation
 	Checksum  string

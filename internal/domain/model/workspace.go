@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -22,46 +21,6 @@ type Workspace struct {
 	Checksum  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
-}
-
-func NewWorkspace(tenantID string, dbURL string) *Workspace {
-	now := time.Now()
-	return &Workspace{
-		TenantID:  tenantID,
-		DBURL:     dbURL,
-		Status:    StatusInProgress,
-		Message:   "Ingestion started",
-		CreatedAt: now,
-		UpdatedAt: now,
-	}
-}
-
-func (w *Workspace) SetInProgress() {
-	w.Status = StatusInProgress
-	w.Message = "Ingestion in progress"
-	w.UpdatedAt = time.Now()
-}
-
-func (w *Workspace) SetDone() {
-	w.Status = StatusDone
-	w.Message = "Ingestion completed"
-	w.UpdatedAt = time.Now()
-}
-
-func (w *Workspace) SetError(err error) {
-	w.Status = StatusError
-	w.Message = fmt.Sprintf("ERROR: %s", err.Error())
-	w.UpdatedAt = time.Now()
-}
-
-func (w *Workspace) SetErrorWithMessage(message string) {
-	w.Status = StatusError
-	w.Message = fmt.Sprintf("ERROR: %s", message)
-	w.UpdatedAt = time.Now()
-}
-
-func (w *Workspace) SetChecksum(checksum string) {
-	w.Checksum = checksum
 }
 
 var (

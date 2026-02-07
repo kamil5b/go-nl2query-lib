@@ -1,4 +1,4 @@
-package repository
+package service
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/kamil5b/go-nl-sql/internal/domain/model"
 )
 
-type WorkspaceRepository interface {
+type WorkspaceService interface {
 	Save(ctx context.Context, workspace *model.Workspace) error
 	GetByTenantID(ctx context.Context, tenantID string) (*model.Workspace, error)
 	ListAll(ctx context.Context) ([]*model.Workspace, error)

@@ -1,6 +1,6 @@
-package service
+package repository
 
-type SQLValidator interface {
+type SQLValidatorRepository interface {
 	IsSafe(sql string) (bool, error)
 	ContainsDDLDML(sql string) bool
 }
