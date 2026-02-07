@@ -106,3 +106,17 @@ func (mr *MockStatusRepositoryMockRecorder) SetInProgress(ctx, tenantID interfac
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetInProgress", reflect.TypeOf((*MockStatusRepository)(nil).SetInProgress), ctx, tenantID)
 }
+
+// SetWarn mocks base method.
+func (m *MockStatusRepository) SetWarn(ctx context.Context, tenantID, message string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetWarn", ctx, tenantID, message)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetWarn indicates an expected call of SetWarn.
+func (mr *MockStatusRepositoryMockRecorder) SetWarn(ctx, tenantID, message interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWarn", reflect.TypeOf((*MockStatusRepository)(nil).SetWarn), ctx, tenantID, message)
+}

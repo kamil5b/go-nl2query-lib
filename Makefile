@@ -26,7 +26,11 @@ coverage:
 mocks-install:
 	go install github.com/golang/mock/mockgen@latest
 
-mocks: mocks-install
+clear-mocks:
+	rm -rf mocks/*
+
+mocks: mocks-install clear-mocks
+	mkdir -p mocks
 	@find internal/domain -name "*.go" -type f | grep -E "(service|repository)" | while read file; do \
 		filename=$$(basename $$file .go); \
 		mockgen -source=$$file -destination=mocks/mock_$$filename.go -package=mocks; \

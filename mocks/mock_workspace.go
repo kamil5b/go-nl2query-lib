@@ -79,30 +79,17 @@ func (mr *MockWorkspaceServiceMockRecorder) ListAll(ctx interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAll", reflect.TypeOf((*MockWorkspaceService)(nil).ListAll), ctx)
 }
 
-// Save mocks base method.
-func (m *MockWorkspaceService) Save(ctx context.Context, workspace *model.Workspace) error {
+// SyncClientDatabase mocks base method.
+func (m *MockWorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string) (*model.DatabaseMetadata, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Save", ctx, workspace)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "SyncClientDatabase", ctx, dbUrl)
+	ret0, _ := ret[0].(*model.DatabaseMetadata)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// Save indicates an expected call of Save.
-func (mr *MockWorkspaceServiceMockRecorder) Save(ctx, workspace interface{}) *gomock.Call {
+// SyncClientDatabase indicates an expected call of SyncClientDatabase.
+func (mr *MockWorkspaceServiceMockRecorder) SyncClientDatabase(ctx, dbUrl interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Save", reflect.TypeOf((*MockWorkspaceService)(nil).Save), ctx, workspace)
-}
-
-// Update mocks base method.
-func (m *MockWorkspaceService) Update(ctx context.Context, workspace *model.Workspace) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, workspace)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Update indicates an expected call of Update.
-func (mr *MockWorkspaceServiceMockRecorder) Update(ctx, workspace interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockWorkspaceService)(nil).Update), ctx, workspace)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SyncClientDatabase", reflect.TypeOf((*MockWorkspaceService)(nil).SyncClientDatabase), ctx, dbUrl)
 }
