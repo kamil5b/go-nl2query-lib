@@ -11,6 +11,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// @example usage:
+//
+//	func TestIngestionService_VectorizeAndStore(t *testing.T) {
+//	    ingestion.UnitTestVectorizeAndStore(t, New(embedderRepo, vectorStoreRepo, statusRepo))
+//	}
 func UnitTestVectorizeAndStore(
 	t *testing.T,
 	svcImp func(
