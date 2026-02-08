@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockTaskQueue is a mock of TaskQueue interface.
-type MockTaskQueue struct {
+// MockTaskQueueService is a mock of TaskQueueService interface.
+type MockTaskQueueService struct {
 	ctrl     *gomock.Controller
-	recorder *MockTaskQueueMockRecorder
+	recorder *MockTaskQueueServiceMockRecorder
 }
 
-// MockTaskQueueMockRecorder is the mock recorder for MockTaskQueue.
-type MockTaskQueueMockRecorder struct {
-	mock *MockTaskQueue
+// MockTaskQueueServiceMockRecorder is the mock recorder for MockTaskQueueService.
+type MockTaskQueueServiceMockRecorder struct {
+	mock *MockTaskQueueService
 }
 
-// NewMockTaskQueue creates a new mock instance.
-func NewMockTaskQueue(ctrl *gomock.Controller) *MockTaskQueue {
-	mock := &MockTaskQueue{ctrl: ctrl}
-	mock.recorder = &MockTaskQueueMockRecorder{mock}
+// NewMockTaskQueueService creates a new mock instance.
+func NewMockTaskQueueService(ctrl *gomock.Controller) *MockTaskQueueService {
+	mock := &MockTaskQueueService{ctrl: ctrl}
+	mock.recorder = &MockTaskQueueServiceMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTaskQueue) EXPECT() *MockTaskQueueMockRecorder {
+func (m *MockTaskQueueService) EXPECT() *MockTaskQueueServiceMockRecorder {
 	return m.recorder
 }
 
 // EnqueueIngestionTask mocks base method.
-func (m *MockTaskQueue) EnqueueIngestionTask(ctx context.Context, tenantID, dbURL string) error {
+func (m *MockTaskQueueService) EnqueueIngestionTask(ctx context.Context, tenantID, dbURL string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EnqueueIngestionTask", ctx, tenantID, dbURL)
 	ret0, _ := ret[0].(error)
@@ -43,7 +43,7 @@ func (m *MockTaskQueue) EnqueueIngestionTask(ctx context.Context, tenantID, dbUR
 }
 
 // EnqueueIngestionTask indicates an expected call of EnqueueIngestionTask.
-func (mr *MockTaskQueueMockRecorder) EnqueueIngestionTask(ctx, tenantID, dbURL interface{}) *gomock.Call {
+func (mr *MockTaskQueueServiceMockRecorder) EnqueueIngestionTask(ctx, tenantID, dbURL interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EnqueueIngestionTask", reflect.TypeOf((*MockTaskQueue)(nil).EnqueueIngestionTask), ctx, tenantID, dbURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EnqueueIngestionTask", reflect.TypeOf((*MockTaskQueueService)(nil).EnqueueIngestionTask), ctx, tenantID, dbURL)
 }
