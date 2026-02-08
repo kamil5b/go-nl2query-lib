@@ -35,62 +35,17 @@ func (m *MockQueryService) EXPECT() *MockQueryServiceMockRecorder {
 	return m.recorder
 }
 
-// PromptToData mocks base method.
-func (m *MockQueryService) PromptToData(ctx context.Context, prompt string) (map[string]any, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PromptToData", ctx, prompt)
-	ret0, _ := ret[0].(map[string]any)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// PromptToData indicates an expected call of PromptToData.
-func (mr *MockQueryServiceMockRecorder) PromptToData(ctx, prompt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PromptToData", reflect.TypeOf((*MockQueryService)(nil).PromptToData), ctx, prompt)
-}
-
-// PromptToQuery mocks base method.
-func (m *MockQueryService) PromptToQuery(ctx context.Context, prompt string) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PromptToQuery", ctx, prompt)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// PromptToQuery indicates an expected call of PromptToQuery.
-func (mr *MockQueryServiceMockRecorder) PromptToQuery(ctx, prompt interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PromptToQuery", reflect.TypeOf((*MockQueryService)(nil).PromptToQuery), ctx, prompt)
-}
-
 // PromptToQueryData mocks base method.
-func (m *MockQueryService) PromptToQueryData(ctx context.Context, prompt string) (*model.Query, error) {
+func (m *MockQueryService) PromptToQueryData(ctx context.Context, tenantID, prompt string, withData bool) (*model.Query, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PromptToQueryData", ctx, prompt)
+	ret := m.ctrl.Call(m, "PromptToQueryData", ctx, tenantID, prompt, withData)
 	ret0, _ := ret[0].(*model.Query)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // PromptToQueryData indicates an expected call of PromptToQueryData.
-func (mr *MockQueryServiceMockRecorder) PromptToQueryData(ctx, prompt interface{}) *gomock.Call {
+func (mr *MockQueryServiceMockRecorder) PromptToQueryData(ctx, tenantID, prompt, withData interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PromptToQueryData", reflect.TypeOf((*MockQueryService)(nil).PromptToQueryData), ctx, prompt)
-}
-
-// QueryToData mocks base method.
-func (m *MockQueryService) QueryToData(ctx context.Context, query string) (map[string]any, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "QueryToData", ctx, query)
-	ret0, _ := ret[0].(map[string]any)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// QueryToData indicates an expected call of QueryToData.
-func (mr *MockQueryServiceMockRecorder) QueryToData(ctx, query interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QueryToData", reflect.TypeOf((*MockQueryService)(nil).QueryToData), ctx, query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PromptToQueryData", reflect.TypeOf((*MockQueryService)(nil).PromptToQueryData), ctx, tenantID, prompt, withData)
 }

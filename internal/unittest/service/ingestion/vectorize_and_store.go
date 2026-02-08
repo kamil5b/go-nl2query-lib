@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/kamil5b/go-nl-sql/internal/domain/model"
+	"github.com/kamil5b/go-nl-sql/internal/domain/repository"
 	"github.com/kamil5b/go-nl-sql/internal/domain/service"
 	"github.com/kamil5b/go-nl-sql/mocks"
 	"github.com/stretchr/testify/require"
@@ -20,9 +21,9 @@ import (
 func UnitTestVectorizeAndStore(
 	t *testing.T,
 	svcImp func(
-		embedderRepo *mocks.MockEmbedderRepository,
-		vectorStoreRepo *mocks.MockVectorStoreRepository,
-		statusRepo *mocks.MockStatusRepository,
+		embedderRepo repository.EmbedderRepository,
+		vectorStoreRepo repository.VectorStoreRepository,
+		statusRepo repository.StatusRepository,
 	) service.IngestionService,
 ) {
 	var (

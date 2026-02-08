@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	model "github.com/kamil5b/go-nl-sql/internal/domain/model"
 )
 
 // MockLLMRepository is a mock of LLMRepository interface.
@@ -34,32 +35,22 @@ func (m *MockLLMRepository) EXPECT() *MockLLMRepositoryMockRecorder {
 	return m.recorder
 }
 
-// CorrectQuery mocks base method.
-func (m *MockLLMRepository) CorrectQuery(ctx context.Context, prompt, invalidSQL string, errors []string) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CorrectQuery", ctx, prompt, invalidSQL, errors)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CorrectQuery indicates an expected call of CorrectQuery.
-func (mr *MockLLMRepositoryMockRecorder) CorrectQuery(ctx, prompt, invalidSQL, errors interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CorrectQuery", reflect.TypeOf((*MockLLMRepository)(nil).CorrectQuery), ctx, prompt, invalidSQL, errors)
-}
-
 // GenerateQuery mocks base method.
-func (m *MockLLMRepository) GenerateQuery(ctx context.Context, prompt, context string) (string, error) {
+func (m *MockLLMRepository) GenerateQuery(ctx context.Context, prompt string, contexts []model.Vector, additionalPrompts ...string) (*string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateQuery", ctx, prompt, context)
-	ret0, _ := ret[0].(string)
+	varargs := []interface{}{ctx, prompt, contexts}
+	for _, a := range additionalPrompts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "GenerateQuery", varargs...)
+	ret0, _ := ret[0].(*string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateQuery indicates an expected call of GenerateQuery.
-func (mr *MockLLMRepositoryMockRecorder) GenerateQuery(ctx, prompt, context interface{}) *gomock.Call {
+func (mr *MockLLMRepositoryMockRecorder) GenerateQuery(ctx, prompt, contexts interface{}, additionalPrompts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateQuery", reflect.TypeOf((*MockLLMRepository)(nil).GenerateQuery), ctx, prompt, context)
+	varargs := append([]interface{}{ctx, prompt, contexts}, additionalPrompts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateQuery", reflect.TypeOf((*MockLLMRepository)(nil).GenerateQuery), varargs...)
 }

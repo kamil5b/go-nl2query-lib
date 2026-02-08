@@ -14,13 +14,12 @@ const (
 )
 
 type Workspace struct {
-	TenantID  string
-	DBURL     string
-	Status    WorkspaceStatus
-	Message   string
-	Checksum  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	TenantID       string
+	EncryptedDBURL string
+	Status         WorkspaceStatus
+	Checksum       string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 var (

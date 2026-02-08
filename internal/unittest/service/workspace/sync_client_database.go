@@ -20,16 +20,16 @@ import (
 func UnitTestSyncClientDatabase(
 	t *testing.T,
 	svcImp func(
-		clientDatabaseRepo repository.DatabaseRepository,
-		internalDatabaseRepo repository.DatabaseRepository,
+		clientDatabaseRepo repository.ClientDatabaseRepository,
+		internalDatabaseRepo repository.InternalDatabaseRepository,
 		encryptRepo repository.EncryptRepository,
 		hashRepo repository.HashRepository,
 		taskQueueService service.TaskQueueService,
 	) service.WorkspaceService,
 ) {
 	var (
-		mockClientDatabaseRepo   *mocks.MockDatabaseRepository
-		mockInternalDatabaseRepo *mocks.MockDatabaseRepository
+		mockClientDatabaseRepo   *mocks.MockClientDatabaseRepository
+		mockInternalDatabaseRepo *mocks.MockInternalDatabaseRepository
 		mockEncryptRepo          *mocks.MockEncryptRepository
 		mockHashRepo             *mocks.MockHashRepository
 		mockTaskQueueService     *mocks.MockTaskQueueService
@@ -47,13 +47,11 @@ func UnitTestSyncClientDatabase(
 
 	tests := []struct {
 		name        string
-		clientDBURL string
 		prepareMock func()
 		expectError error
 	}{
 		{
-			name:        "success update",
-			clientDBURL: mockString,
+			name: "success update",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -69,7 +67,7 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
 				mockClientDatabaseRepo.
 					EXPECT().
@@ -92,8 +90,7 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name:        "success create",
-			clientDBURL: mockString,
+			name: "success create",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -109,7 +106,7 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(nil, nil) // No existing record
 				mockClientDatabaseRepo.
 					EXPECT().
@@ -132,8 +129,7 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name:        "err enqueue ingestion task",
-			clientDBURL: mockString,
+			name: "err enqueue ingestion task",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -149,7 +145,7 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(nil, nil) // No existing record
 				mockClientDatabaseRepo.
 					EXPECT().
@@ -172,8 +168,7 @@ func UnitTestSyncClientDatabase(
 			expectError: errors.New("err"),
 		},
 		{
-			name:        "success with no changes",
-			clientDBURL: mockString,
+			name: "success with no changes",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -189,7 +184,7 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
 				mockClientDatabaseRepo.
 					EXPECT().
@@ -207,8 +202,7 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name:        "error encryptor generate checksum",
-			clientDBURL: mockString,
+			name: "error encryptor generate checksum",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -224,7 +218,7 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
 				mockClientDatabaseRepo.
 					EXPECT().
@@ -242,8 +236,7 @@ func UnitTestSyncClientDatabase(
 			expectError: errors.New("err"),
 		},
 		{
-			name:        "success with warn",
-			clientDBURL: mockString,
+			name: "success with warn",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -259,7 +252,7 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
 				mockClientDatabaseRepo.
 					EXPECT().
@@ -269,8 +262,7 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name:        "err executing internal DB",
-			clientDBURL: mockString,
+			name: "err executing internal DB",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -286,14 +278,13 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(nil, errors.New("err"))
 			},
 			expectError: errors.New("err"),
 		},
 		{
-			name:        "err connect internal DB",
-			clientDBURL: mockString,
+			name: "err connect internal DB",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -311,8 +302,7 @@ func UnitTestSyncClientDatabase(
 			expectError: errors.New("err"),
 		},
 		{
-			name:        "err generate tenant ID",
-			clientDBURL: mockString,
+			name: "err generate tenant ID",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
@@ -328,9 +318,10 @@ func UnitTestSyncClientDatabase(
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mockClientDatabaseRepo = mocks.NewMockDatabaseRepository(ctrl)
-			mockInternalDatabaseRepo = mocks.NewMockDatabaseRepository(ctrl)
+			mockClientDatabaseRepo = mocks.NewMockClientDatabaseRepository(ctrl)
+			mockInternalDatabaseRepo = mocks.NewMockInternalDatabaseRepository(ctrl)
 			mockEncryptRepo = mocks.NewMockEncryptRepository(ctrl)
+			mockHashRepo = mocks.NewMockHashRepository(ctrl)
 			mockTaskQueueService = mocks.NewMockTaskQueueService(ctrl)
 
 			svc := svcImp(
@@ -345,7 +336,7 @@ func UnitTestSyncClientDatabase(
 				tt.prepareMock()
 			}
 
-			_, err := svc.SyncClientDatabase(context.Background(), tt.clientDBURL)
+			_, err := svc.SyncClientDatabase(context.Background(), mockString)
 
 			if tt.expectError != nil {
 				require.Error(t, err)
