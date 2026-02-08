@@ -34,32 +34,32 @@ func (m *MockLLMRepository) EXPECT() *MockLLMRepositoryMockRecorder {
 	return m.recorder
 }
 
-// CorrectSQL mocks base method.
-func (m *MockLLMRepository) CorrectSQL(ctx context.Context, prompt, invalidSQL string, error []string) (string, error) {
+// CorrectQuery mocks base method.
+func (m *MockLLMRepository) CorrectQuery(ctx context.Context, prompt, invalidSQL string, errors []string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CorrectSQL", ctx, prompt, invalidSQL, error)
+	ret := m.ctrl.Call(m, "CorrectQuery", ctx, prompt, invalidSQL, errors)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CorrectSQL indicates an expected call of CorrectSQL.
-func (mr *MockLLMRepositoryMockRecorder) CorrectSQL(ctx, prompt, invalidSQL, error interface{}) *gomock.Call {
+// CorrectQuery indicates an expected call of CorrectQuery.
+func (mr *MockLLMRepositoryMockRecorder) CorrectQuery(ctx, prompt, invalidSQL, errors interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CorrectSQL", reflect.TypeOf((*MockLLMRepository)(nil).CorrectSQL), ctx, prompt, invalidSQL, error)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CorrectQuery", reflect.TypeOf((*MockLLMRepository)(nil).CorrectQuery), ctx, prompt, invalidSQL, errors)
 }
 
-// GenerateSQL mocks base method.
-func (m *MockLLMRepository) GenerateSQL(ctx context.Context, prompt, context string) (string, error) {
+// GenerateQuery mocks base method.
+func (m *MockLLMRepository) GenerateQuery(ctx context.Context, prompt, context string) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateSQL", ctx, prompt, context)
+	ret := m.ctrl.Call(m, "GenerateQuery", ctx, prompt, context)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GenerateSQL indicates an expected call of GenerateSQL.
-func (mr *MockLLMRepositoryMockRecorder) GenerateSQL(ctx, prompt, context interface{}) *gomock.Call {
+// GenerateQuery indicates an expected call of GenerateQuery.
+func (mr *MockLLMRepositoryMockRecorder) GenerateQuery(ctx, prompt, context interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateSQL", reflect.TypeOf((*MockLLMRepository)(nil).GenerateSQL), ctx, prompt, context)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateQuery", reflect.TypeOf((*MockLLMRepository)(nil).GenerateQuery), ctx, prompt, context)
 }

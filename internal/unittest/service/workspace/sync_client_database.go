@@ -22,19 +22,22 @@ func UnitTestSyncClientDatabase(
 	svcImp func(
 		clientDatabaseRepo repository.DatabaseRepository,
 		internalDatabaseRepo repository.DatabaseRepository,
-		encryptorRepo repository.EncryptorRepository,
+		encryptRepo repository.EncryptRepository,
+		hashRepo repository.HashRepository,
 		taskQueueService service.TaskQueueService,
 	) service.WorkspaceService,
 ) {
 	var (
 		mockClientDatabaseRepo   *mocks.MockDatabaseRepository
 		mockInternalDatabaseRepo *mocks.MockDatabaseRepository
-		mockEncryptorRepo        *mocks.MockEncryptorRepository
+		mockEncryptRepo          *mocks.MockEncryptRepository
+		mockHashRepo             *mocks.MockHashRepository
 		mockTaskQueueService     *mocks.MockTaskQueueService
 	)
 
 	mockString := "mocked string URL"
 	mockTenantID := "tenant_123"
+	mockEncryptedDBUrl := "encrypted_tenant_123"
 	mockChecksum := "checksum_abc"
 	mockChecksum2 := "checksum_def"
 
@@ -52,10 +55,14 @@ func UnitTestSyncClientDatabase(
 			name:        "success update",
 			clientDBURL: mockString,
 			prepareMock: func() {
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
@@ -72,7 +79,7 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return(mockChecksum2, nil)
@@ -88,10 +95,14 @@ func UnitTestSyncClientDatabase(
 			name:        "success create",
 			clientDBURL: mockString,
 			prepareMock: func() {
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
@@ -108,10 +119,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
-					Return(mockChecksum2, nil)
+					Return(mockChecksum, nil)
 				mockTaskQueueService.
 					EXPECT().
 					EnqueueIngestionTask(gomock.Any(), mockTenantID, mockString).
@@ -121,13 +132,57 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name:        "success with no changes",
+			name:        "err enqueue ingestion task",
 			clientDBURL: mockString,
 			prepareMock: func() {
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
+				mockInternalDatabaseRepo.
+					EXPECT().
+					Connect(gomock.Any(), gomock.Any()).
+					Return(nil)
+				mockInternalDatabaseRepo.
+					EXPECT().
+					Execute(gomock.Any(), gomock.Any()).
+					Return(nil, nil) // No existing record
+				mockClientDatabaseRepo.
+					EXPECT().
+					Connect(gomock.Any(), mockString).
+					Return(nil)
+				mockClientDatabaseRepo.
+					EXPECT().
+					Execute(gomock.Any(), gomock.Any()).
+					Return(gomock.Any(), nil)
+				mockHashRepo.
+					EXPECT().
+					GenerateChecksum(gomock.Any()).
+					Return(mockChecksum, nil)
+				mockTaskQueueService.
+					EXPECT().
+					EnqueueIngestionTask(gomock.Any(), mockTenantID, mockString).
+					Return(errors.New("err"))
+
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:        "success with no changes",
+			clientDBURL: mockString,
+			prepareMock: func() {
+				mockHashRepo.
+					EXPECT().
+					GenerateTenantID(mockString).
+					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
@@ -144,7 +199,7 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return(mockChecksum, nil) // Match existing checksum
@@ -152,13 +207,17 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name:        "success with warn",
+			name:        "error encryptor generate checksum",
 			clientDBURL: mockString,
 			prepareMock: func() {
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
@@ -170,18 +229,30 @@ func UnitTestSyncClientDatabase(
 				mockClientDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
-					Return(errors.New("can't connect to client database")) // Simulate connection error\
+					Return(nil)
+				mockClientDatabaseRepo.
+					EXPECT().
+					Execute(gomock.Any(), gomock.Any()).
+					Return(gomock.Any(), nil)
+				mockHashRepo.
+					EXPECT().
+					GenerateChecksum(gomock.Any()).
+					Return(nil, errors.New("err"))
 			},
-			expectError: nil,
+			expectError: errors.New("err"),
 		},
 		{
 			name:        "success with warn",
 			clientDBURL: mockString,
 			prepareMock: func() {
-				mockEncryptorRepo.
+				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
@@ -193,9 +264,62 @@ func UnitTestSyncClientDatabase(
 				mockClientDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
-					Return(errors.New("can't connect to client database")) // Simulate connection error\
+					Return(errors.New("can't connect to client database")) // Simulate connection error
 			},
 			expectError: nil,
+		},
+		{
+			name:        "err executing internal DB",
+			clientDBURL: mockString,
+			prepareMock: func() {
+				mockHashRepo.
+					EXPECT().
+					GenerateTenantID(mockString).
+					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
+				mockInternalDatabaseRepo.
+					EXPECT().
+					Connect(gomock.Any(), gomock.Any()).
+					Return(nil)
+				mockInternalDatabaseRepo.
+					EXPECT().
+					Execute(gomock.Any(), gomock.Any()).
+					Return(nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:        "err connect internal DB",
+			clientDBURL: mockString,
+			prepareMock: func() {
+				mockHashRepo.
+					EXPECT().
+					GenerateTenantID(mockString).
+					Return([]byte(mockTenantID), nil)
+				mockEncryptRepo.
+					EXPECT().
+					Encrypt(mockString).
+					Return(mockEncryptedDBUrl)
+				mockInternalDatabaseRepo.
+					EXPECT().
+					Connect(gomock.Any(), gomock.Any()).
+					Return(errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:        "err generate tenant ID",
+			clientDBURL: mockString,
+			prepareMock: func() {
+				mockHashRepo.
+					EXPECT().
+					GenerateTenantID(mockString).
+					Return(nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
 		},
 	}
 
@@ -206,13 +330,14 @@ func UnitTestSyncClientDatabase(
 
 			mockClientDatabaseRepo = mocks.NewMockDatabaseRepository(ctrl)
 			mockInternalDatabaseRepo = mocks.NewMockDatabaseRepository(ctrl)
-			mockEncryptorRepo = mocks.NewMockEncryptorRepository(ctrl)
+			mockEncryptRepo = mocks.NewMockEncryptRepository(ctrl)
 			mockTaskQueueService = mocks.NewMockTaskQueueService(ctrl)
 
 			svc := svcImp(
 				mockClientDatabaseRepo,
 				mockInternalDatabaseRepo,
-				mockEncryptorRepo,
+				mockEncryptRepo,
+				mockHashRepo,
 				mockTaskQueueService,
 			)
 
