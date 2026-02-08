@@ -9,7 +9,6 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	model "github.com/kamil5b/go-nl-sql/internal/domain/model"
 )
 
 // MockStatusRepository is a mock of StatusRepository interface.
@@ -50,13 +49,12 @@ func (mr *MockStatusRepositoryMockRecorder) Clear(ctx, tenantID interface{}) *go
 }
 
 // GetStatus mocks base method.
-func (m *MockStatusRepository) GetStatus(ctx context.Context, tenantID string) (model.WorkspaceStatus, string, error) {
+func (m *MockStatusRepository) GetStatus(ctx context.Context, tenantID string) (*string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetStatus", ctx, tenantID)
-	ret0, _ := ret[0].(model.WorkspaceStatus)
-	ret1, _ := ret[1].(string)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret0, _ := ret[0].(*string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetStatus indicates an expected call of GetStatus.

@@ -21,6 +21,7 @@ import (
 func UnitTestPromptToQueryData(
 	t *testing.T,
 	svcImp func(
+		statusRepo repository.StatusRepository,
 		clientDatabaseRepo repository.ClientDatabaseRepository,
 		internalDatabaseRepo repository.InternalDatabaseRepository,
 		encryptRepo repository.EncryptRepository,
@@ -31,6 +32,7 @@ func UnitTestPromptToQueryData(
 	) service.QueryService,
 ) {
 	var (
+		mockStatusRepo           *mocks.MockStatusRepository
 		mockClientDatabaseRepo   *mocks.MockClientDatabaseRepository
 		mockInternalDatabaseRepo *mocks.MockInternalDatabaseRepository
 		mockEncryptRepo          *mocks.MockEncryptRepository
@@ -70,10 +72,14 @@ func UnitTestPromptToQueryData(
 			name:     "success with data and loops",
 			withData: true,
 			prepareMock: func() {
+				mockStatusRepo.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(nil, nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
-					Return("mocked database schema", nil)
+					Return(nil)
 				mockInternalDatabaseRepo.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
@@ -125,6 +131,7 @@ func UnitTestPromptToQueryData(
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
+			mockStatusRepo = mocks.NewMockStatusRepository(ctrl)
 			mockClientDatabaseRepo = mocks.NewMockClientDatabaseRepository(ctrl)
 			mockInternalDatabaseRepo = mocks.NewMockInternalDatabaseRepository(ctrl)
 			mockEncryptRepo = mocks.NewMockEncryptRepository(ctrl)
@@ -134,6 +141,7 @@ func UnitTestPromptToQueryData(
 			mockQueryValidatorRepo = mocks.NewMockQueryValidatorRepository(ctrl)
 
 			svc := svcImp(
+				mockStatusRepo,
 				mockClientDatabaseRepo,
 				mockInternalDatabaseRepo,
 				mockEncryptRepo,
