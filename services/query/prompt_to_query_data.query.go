@@ -8,26 +8,27 @@ import (
 	"github.com/kamil5b/go-nl2query-lib/ports"
 )
 
-func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, prompt string, withData bool) (*domains.Query, error) {
+func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, prompt string, withData bool) (*domains.Query, *string, error) {
 	// Step 1: Check tenant status
+	var warn *string
 	workspaceStatus, _, err := s.statusAdapter.GetStatus(ctx, tenantID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if workspaceStatus == domains.StatusInProgress {
-		return nil, ports.StatusInProgressError
+		return nil, nil, ports.StatusInProgressError
 	}
 
 	// Step 2: Connect to internal database
 	err = s.internalDatabaseAdapter.Connect(ctx, tenantID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Step 3: Get workspace information
 	workspace, err := s.internalDatabaseAdapter.GetWorkspaceByTenantID(ctx, tenantID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Step 4: Decrypt and connect to client database if withData is true
@@ -36,23 +37,26 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 	if withData && workspace != nil {
 		decryptedURL, decErr := s.encryptAdapter.Decrypt(workspace.EncryptedDBURL)
 		if decErr != nil {
-			return nil, decErr
+			return nil, nil, decErr
 		}
 		if connErr := s.clientDatabaseAdapter.Connect(ctx, decryptedURL); connErr == nil {
 			clientDBConnected = true
+		} else {
+			warnMsg := ports.QueryServiceWarnUseExistingClientDatabaseError
+			warn = &warnMsg
 		}
 	}
 
 	// Step 5: Embed the prompt
 	vector, err := s.embedderAdapter.Embed(ctx, prompt)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Step 6: Search for relevant vectors
 	vectors, err := s.vectorStoreAdapter.Search(ctx, tenantID, vector, 10)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Step 7: Generate query in a loop until safe
@@ -68,7 +72,7 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 		}
 
 		if generationErr != nil {
-			return nil, generationErr
+			return nil, nil, generationErr
 		}
 
 		// Validate safety
@@ -106,14 +110,14 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 					ResultData:  convertToMapPtr(result),
 					CreatedAt:   time.Now(),
 					UpdatedAt:   time.Now(),
-				}, nil
+				}, nil, nil
 			}
 
 			// Execution failed, try to regenerate query with error
 			execErrMsg := execErr.Error()
 			newQuery, genErr := s.LLMAdapter.GenerateQuery(ctx, prompt, vectors, execErrMsg)
 			if genErr != nil {
-				return nil, genErr
+				return nil, nil, genErr
 			}
 
 			// Validate the new query
@@ -134,7 +138,7 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 		ResultQuery: query,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
-	}, nil
+	}, warn, nil
 }
 
 // convertToMapPtr converts []map[string]any to *map[string]any by taking the first element

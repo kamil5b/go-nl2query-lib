@@ -7,6 +7,5 @@ import (
 )
 
 func (ws *WorkspaceService) GetByTenantID(ctx context.Context, tenantID string) (*model.Workspace, error) {
-	// TODO: Implement GetByTenantID
-	return nil, nil
+	return ws.internalDatabaseAdapter.GetWorkspaceByTenantID(ctx, tenantID)
 }

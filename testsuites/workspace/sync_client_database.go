@@ -74,6 +74,7 @@ func UnitTestSyncClientDatabase(
 	tests := []struct {
 		name        string
 		prepareMock func()
+		warnMessage *string
 		expectError error
 	}{
 		{
@@ -309,6 +310,10 @@ func UnitTestSyncClientDatabase(
 					Connect(gomock.Any(), mockString).
 					Return(errors.New("can't connect to client database")) // Simulate connection error
 			},
+			warnMessage: func() *string {
+				msg := ports.WorkspaceServiceWarnUseExistingClientDatabaseError
+				return &msg
+			}(),
 			expectError: nil,
 		},
 		{
@@ -414,11 +419,12 @@ func UnitTestSyncClientDatabase(
 				tt.prepareMock()
 			}
 
-			_, err := svc.SyncClientDatabase(context.Background(), mockString)
+			_, msg, err := svc.SyncClientDatabase(context.Background(), mockString)
 
 			if tt.expectError != nil {
 				require.Error(t, err)
 				require.Equal(t, err, tt.expectError)
+				require.Equal(t, msg, tt.warnMessage)
 			} else {
 				require.NoError(t, err)
 			}

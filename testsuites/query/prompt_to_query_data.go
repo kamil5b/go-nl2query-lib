@@ -62,11 +62,15 @@ func UnitTestPromptToQueryData(
 			Content:   mockContent,
 		},
 	}
+	constToWarn := func(msg string) *string {
+		return &msg
+	}
 
 	tests := []struct {
 		name        string
 		prepareMock func()
 		withData    bool
+		warnMessage *string
 		expectError error
 	}{
 		{
@@ -147,8 +151,9 @@ func UnitTestPromptToQueryData(
 			expectError: nil,
 		},
 		{
-			name:     "success with data and full route with loops but final DDL/DML warning so no data execution",
-			withData: true,
+			name:        "success with data and full route with loops but final DDL/DML warning so no data execution",
+			withData:    true,
+			warnMessage: constToWarn(ports.QueryServiceWarnDDLDMLDetected),
 			prepareMock: func() {
 				mockStatusAdapter.
 					EXPECT().
@@ -220,8 +225,9 @@ func UnitTestPromptToQueryData(
 			expectError: nil,
 		},
 		{
-			name:     "success with data and full route with loops but fail to connect client database",
-			withData: true,
+			name:        "success with data and full route with loops but fail to connect client database",
+			withData:    true,
+			warnMessage: constToWarn(ports.QueryServiceWarnWontExecuteClientDatabaseError),
 			prepareMock: func() {
 				mockStatusAdapter.
 					EXPECT().
@@ -508,11 +514,12 @@ func UnitTestPromptToQueryData(
 				tt.prepareMock()
 			}
 
-			_, err := svc.PromptToQueryData(context.Background(), mockTenantID, mockString, tt.withData)
+			_, msg, err := svc.PromptToQueryData(context.Background(), mockTenantID, mockString, tt.withData)
 
 			if tt.expectError != nil {
 				require.Error(t, err)
 				require.Equal(t, err, tt.expectError)
+				require.Equal(t, msg, tt.warnMessage)
 			} else {
 				require.NoError(t, err)
 			}

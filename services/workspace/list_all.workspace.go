@@ -7,6 +7,5 @@ import (
 )
 
 func (ws *WorkspaceService) ListAll(ctx context.Context) ([]*model.Workspace, error) {
-	// TODO: Implement ListAll
-	return nil, nil
+	return ws.internalDatabaseAdapter.ListAllWorkspaces(ctx)
 }

@@ -8,18 +8,18 @@ import (
 	"github.com/kamil5b/go-nl2query-lib/ports"
 )
 
-func (ws *WorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string) (*model.DatabaseMetadata, error) {
+func (ws *WorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string) (*model.DatabaseMetadata, *string, error) {
 	// Step 1: Generate tenant ID from database URL
 	tenantID := ws.hashAdapter.GenerateTenantID(dbUrl)
 
 	// Step 2: Check status
 	status, _, err := ws.statusAdapter.GetStatus(ctx, tenantID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if status == domains.StatusInProgress {
-		return nil, ports.StatusInProgressError
+		return nil, nil, ports.StatusInProgressError
 	}
 
 	// Step 3: Encrypt the database URL
@@ -27,13 +27,13 @@ func (ws *WorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string
 
 	// Step 4: Connect to internal database
 	if err := ws.internalDatabaseAdapter.Connect(ctx, encryptedDBUrl); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Step 5: Check if workspace already exists
 	existingWorkspace, err := ws.internalDatabaseAdapter.GetWorkspaceByTenantID(ctx, tenantID)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var existingChecksum string
@@ -42,21 +42,22 @@ func (ws *WorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string
 	}
 
 	// Step 6: Connect to client database (treat connection error as warning)
-	if err := ws.clientDatabaseAdapter.Connect(ctx, dbUrl); err != nil {
+	if err := ws.clientDatabaseAdapter.Connect(ctx, dbUrl); err != nil && existingWorkspace != nil {
 		// Connection error is treated as a warning, return nil
-		return nil, nil
+		msg := ports.WorkspaceServiceWarnUseExistingClientDatabaseError
+		return nil, &msg, nil
 	}
 
 	// Step 7: Execute query to get database metadata
 	metadata, err := ws.clientDatabaseAdapter.GetDatabaseMetadata(ctx)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Step 9: Generate checksum for the database
 	newChecksum, err := ws.hashAdapter.GenerateChecksum(metadata)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	metadata.Checksum = newChecksum
@@ -64,13 +65,13 @@ func (ws *WorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string
 	// Step 10: Check if checksum has changed
 	if existingWorkspace != nil && newChecksum == existingChecksum {
 		// No changes detected, return success without enqueueing task
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	// Step 11: Enqueue ingestion task if checksum changed or workspace is new
 	if err := ws.taskQueueService.EnqueueIngestionTask(ctx, tenantID, dbUrl); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return metadata, nil
+	return metadata, nil, nil
 }

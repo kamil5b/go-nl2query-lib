@@ -80,12 +80,13 @@ func (mr *MockWorkspaceServiceMockRecorder) ListAll(ctx interface{}) *gomock.Cal
 }
 
 // SyncClientDatabase mocks base method.
-func (m *MockWorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string) (*domains.DatabaseMetadata, error) {
+func (m *MockWorkspaceService) SyncClientDatabase(ctx context.Context, dbUrl string) (*domains.DatabaseMetadata, *string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SyncClientDatabase", ctx, dbUrl)
 	ret0, _ := ret[0].(*domains.DatabaseMetadata)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(*string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // SyncClientDatabase indicates an expected call of SyncClientDatabase.
