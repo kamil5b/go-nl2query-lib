@@ -21,7 +21,7 @@
 - [x] VectorizeAndStoreService implementation
 
 ## Phase 4: Core Services - Query
-- [ ] Implement QueryService Constructor
+- [x] Implement QueryService Constructor
 - [ ] PromptToQueryData Implementation
 
 ## Phase 5: Core Services - Workspace
@@ -73,9 +73,7 @@
 - [ ] Task queue adapter (Redis, RabbitMQ, Asynq)
 - [ ] Status tracking adapter
 
-## Phase 7: Testing Infrastructure
-- [x] Mock generation setup
-- [x] Test suites structure
+## Phase 6: Testing Infrastructure
 - [ ] Integration test suite
 - [ ] End-to-end test examples
 - [ ] Benchmark tests
