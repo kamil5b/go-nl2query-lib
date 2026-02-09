@@ -1,0 +1,51 @@
+
+System Services:
+- Background Services
+    - Ingestion Service
+        - Set status for the tenant_id in Redis: "IN_PROGRESS"
+        - Chunk the metadata to be xxxx-level
+        - use embedding service for the metadatas
+        - store to the Vector Database
+        - If Error in any of the step, set status in Redis: "ERROR: {Error Message}"
+        - Set status done in Redis
+- Server Service
+    - Workspace Service
+        - Encrypt the DB URL for tenant_id => "tenant_(hash)"
+        - Get data from Vector Database base on tenant_id
+        - Connect to Client Database
+            - If Error:
+                - if data have been ingested before: return tenant_id with message "WARN: Will using existing stored because of error when connecting to database: {Error Message}" 
+                - throw error "ERROR: {Error Message}"
+        - Get Database metadata: Tables, Columns, Relations, Constraints, Comments, Indexes
+        - Encrypt the metadata for checksum
+        - If not found: do Ingestion Service (async), return tenant_id
+        - If found:	
+            - compare the checksum
+            - if match, return tenant_id
+            - if not match, do Ingestion Service (async), return tenant_id
+        - If no error: Delete status in Redis
+        - If Error:
+            - if data have been ingested before: return tenant_id with message "WARN: Will using existing stored because of error when ingesting: {Error Message}" 
+            - throw error "ERROR: {Error Message}"
+    - Query Service
+        - Check status data for the tenant_id in Redis
+            - if found and "IN_PROGRESS" throw error: Ingestion in-progress
+            - if not found, continue
+        - Get data from Vector Database base on tenant_id
+            - if not found, throw error: 404 "Database not ingested yet"
+            - if found, continue
+        - use embedding service for vectorize the prompt
+        - vectorized prompt will be use for search as Context in Vector Database with tenant_id as hard filter
+        - Prompt to LLM with original prompt + Context to get the SQL Query
+        - SQL Query will be submitted to SQL Evaluator
+            - (configable) If fail, then prompt back to LLM with the error to fix the error
+            - (configable) loop until it reach configured limit
+            - if reach configured limit and still error, then return SQL Query with Warn
+        - Process the query
+            - If query contains DDL/DML (INSERT, UPDATE, DELETE, ALTER). return SQL Query with message "WARN: Query containing DDL/DML, system not allowed to process further"
+            - If user ask (in payload) to only return SQL, return the SQL
+            - Else, do Data Processing Service.
+                - If error, go back to Prompt to LLM with Original Prompt + Context + Error, loop until it reach configured limit
+                - if reach configured limit and still error, then return SQL Query with Warn
+    - Data Processing Service
+        - Do the SQL to the client's Database to tabular data (map[string]any)

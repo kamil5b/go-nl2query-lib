@@ -93,6 +93,18 @@ func UnitTestVectorizeAndStore(
 	}
 
 	mockVector := [][]float32{{0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}}
+	mockVectorEntities := []domains.Vector{
+		{
+			TenantID:  mockMetaData.TenantID,
+			Embedding: mockVector[0],
+			Content:   "employees table",
+		},
+		{
+			TenantID:  mockMetaData.TenantID,
+			Embedding: mockVector[1],
+			Content:   "project_assignments table",
+		},
+	}
 
 	tests := []struct {
 		name        string
@@ -113,7 +125,7 @@ func UnitTestVectorizeAndStore(
 					Return(mockVector, nil)
 
 				mockVectorStoreRepo.EXPECT().
-					Upsert(gomock.Any(), mockMetaData.TenantID, mockVector).
+					Upsert(gomock.Any(), mockMetaData.TenantID, mockVectorEntities).
 					Return(nil)
 
 				mockStatusRepo.EXPECT().
@@ -135,7 +147,7 @@ func UnitTestVectorizeAndStore(
 					Return(mockVector, nil)
 
 				mockVectorStoreRepo.EXPECT().
-					Upsert(gomock.Any(), mockMetaData.TenantID, mockVector).
+					Upsert(gomock.Any(), mockMetaData.TenantID, mockVectorEntities).
 					Return(nil)
 
 				mockStatusRepo.EXPECT().
@@ -157,7 +169,7 @@ func UnitTestVectorizeAndStore(
 					Return(mockVector, nil)
 
 				mockVectorStoreRepo.EXPECT().
-					Upsert(gomock.Any(), mockMetaData.TenantID, mockVector).
+					Upsert(gomock.Any(), mockMetaData.TenantID, mockVectorEntities).
 					Return(errors.New("some error"))
 
 				mockStatusRepo.EXPECT().
@@ -219,7 +231,7 @@ func UnitTestVectorizeAndStore(
 
 			if tt.expectError != nil {
 				require.Error(t, err)
-				require.ErrorIs(t, err, tt.expectError)
+				require.Equal(t, err, tt.expectError)
 			} else {
 				require.NoError(t, err)
 			}

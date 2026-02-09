@@ -351,7 +351,7 @@ func UnitTestPromptToQueryData(
 
 			if tt.expectError != nil {
 				require.Error(t, err)
-				require.ErrorIs(t, err, tt.expectError)
+				require.Equal(t, err, tt.expectError)
 			} else {
 				require.NoError(t, err)
 			}

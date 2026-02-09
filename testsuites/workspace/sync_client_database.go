@@ -55,7 +55,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -94,7 +94,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -133,7 +133,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -172,7 +172,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -201,12 +201,12 @@ func UnitTestSyncClientDatabase(
 			expectError: nil,
 		},
 		{
-			name: "error encryptor generate checksum",
+			name: "error generate checksum",
 			prepareMock: func() {
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -230,7 +230,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
-					Return(nil, errors.New("err"))
+					Return("", errors.New("err"))
 			},
 			expectError: errors.New("err"),
 		},
@@ -240,7 +240,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -266,7 +266,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -288,7 +288,7 @@ func UnitTestSyncClientDatabase(
 				mockHashRepo.
 					EXPECT().
 					GenerateTenantID(mockString).
-					Return([]byte(mockTenantID), nil)
+					Return(mockTenantID)
 				mockEncryptRepo.
 					EXPECT().
 					Encrypt(mockString).
@@ -297,16 +297,6 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(errors.New("err"))
-			},
-			expectError: errors.New("err"),
-		},
-		{
-			name: "err generate tenant ID",
-			prepareMock: func() {
-				mockHashRepo.
-					EXPECT().
-					GenerateTenantID(mockString).
-					Return(nil, errors.New("err"))
 			},
 			expectError: errors.New("err"),
 		},
@@ -339,7 +329,7 @@ func UnitTestSyncClientDatabase(
 
 			if tt.expectError != nil {
 				require.Error(t, err)
-				require.ErrorIs(t, err, tt.expectError)
+				require.Equal(t, err, tt.expectError)
 			} else {
 				require.NoError(t, err)
 			}
