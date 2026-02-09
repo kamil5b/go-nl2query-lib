@@ -24,6 +24,7 @@ func UnitTestVectorizeAndStore(
 		vectorStoreRepo ports.VectorStoreRepository,
 		statusRepo ports.StatusRepository,
 	) ports.IngestionService,
+	metadataToContentUtil func(metadata *domains.DatabaseMetadata) []string,
 ) {
 	var (
 		mockEmbedderRepo    *mocks.MockEmbedderRepository
@@ -92,18 +93,19 @@ func UnitTestVectorizeAndStore(
 		},
 	}
 
-	mockVector := [][]float32{{0.1, 0.2, 0.3}, {0.4, 0.5, 0.6}}
-	mockVectorEntities := []domains.Vector{
-		{
+	mockContents := metadataToContentUtil(mockMetaData)
+	mockVector := make([][]float32, len(mockContents))
+	for i := range mockContents {
+		mockVector[i] = []float32{0.1 * float32(i+1), 0.2 * float32(i+1), 0.3 * float32(i+1)}
+	}
+
+	mockVectorEntities := make([]domains.Vector, len(mockContents))
+	for i := range mockContents {
+		mockVectorEntities[i] = domains.Vector{
 			TenantID:  mockMetaData.TenantID,
-			Embedding: mockVector[0],
-			Content:   "employees table",
-		},
-		{
-			TenantID:  mockMetaData.TenantID,
-			Embedding: mockVector[1],
-			Content:   "project_assignments table",
-		},
+			Embedding: mockVector[i],
+			Content:   mockContents[i],
+		}
 	}
 
 	tests := []struct {

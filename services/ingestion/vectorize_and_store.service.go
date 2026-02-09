@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/kamil5b/go-nl2query-lib/domains"
+	toon "github.com/toon-format/toon-go"
 )
 
 func (s *IngestionService) VectorizeAndStore(ctx context.Context, metadata *domains.DatabaseMetadata) error {
@@ -13,10 +14,7 @@ func (s *IngestionService) VectorizeAndStore(ctx context.Context, metadata *doma
 	}
 
 	// Prepare content strings from tables for embedding
-	var contents []string
-	for _, table := range metadata.Tables {
-		contents = append(contents, table.Name+" table")
-	}
+	contents := metadataToTOON(metadata)
 
 	// Embed the content batch
 	embeddings, err := s.embedderRepo.EmbedBatch(ctx, contents)
@@ -49,4 +47,46 @@ func (s *IngestionService) VectorizeAndStore(ctx context.Context, metadata *doma
 	}
 
 	return nil
+}
+
+func metadataToTOON(meta *domains.DatabaseMetadata) []string {
+	if meta == nil {
+		return nil
+	}
+
+	type Row struct {
+		TenantID string `json:"tenant_id"`
+		Table    string `json:"table"`
+		Column   string `json:"column"`
+		Type     string `json:"type"`
+		Nullable bool   `json:"nullable"`
+		Primary  bool   `json:"primary_key"`
+		Foreign  bool   `json:"foreign_key"`
+		Comment  string `json:"comment"`
+	}
+
+	var docs []string
+
+	for _, t := range meta.Tables {
+		for _, c := range t.Columns {
+
+			row := Row{
+				TenantID: meta.TenantID,
+				Table:    t.Name,
+				Column:   c.Name,
+				Type:     c.Type,
+				Nullable: c.Nullable,
+				Primary:  c.IsPrimaryKey,
+				Foreign:  c.IsForeignKey,
+				Comment:  c.Comments,
+			}
+
+			encoded, err := toon.MarshalString([]Row{row}) // one column per embedding unit
+			if err == nil {
+				docs = append(docs, encoded)
+			}
+		}
+	}
+
+	return docs
 }

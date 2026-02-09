@@ -12,6 +12,7 @@ require (
 	github.com/kamil5b/go-nl2query-lib/domains v0.0.0-00010101000000-000000000000
 	github.com/kamil5b/go-nl2query-lib/ports v0.0.0-00010101000000-000000000000
 	github.com/kamil5b/go-nl2query-lib/testsuites v0.0.0-00010101000000-000000000000
+	github.com/toon-format/toon-go v0.0.0-20251202084852-7ca0e27c4e8c
 )
 
 require (

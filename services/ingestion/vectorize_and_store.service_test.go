@@ -10,5 +10,5 @@ import (
 func TestIngestionService_VectorizeAndStore(t *testing.T) {
 	ingestionTest.UnitTestVectorizeAndStore(t, func(embedderRepo ports.EmbedderRepository, vectorStoreRepo ports.VectorStoreRepository, statusRepo ports.StatusRepository) ports.IngestionService {
 		return NewIngestionService(nil, embedderRepo, vectorStoreRepo, statusRepo)
-	})
+	}, metadataToTOON)
 }
