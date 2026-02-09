@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	domains "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
 // MockClientDatabasePort is a mock of ClientDatabasePort interface.
@@ -89,4 +90,19 @@ func (m *MockClientDatabasePort) ExecuteDryRun(ctx context.Context, query string
 func (mr *MockClientDatabasePortMockRecorder) ExecuteDryRun(ctx, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteDryRun", reflect.TypeOf((*MockClientDatabasePort)(nil).ExecuteDryRun), ctx, query)
+}
+
+// GetDatabaseMetadata mocks base method.
+func (m *MockClientDatabasePort) GetDatabaseMetadata(ctx context.Context) (*domains.DatabaseMetadata, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDatabaseMetadata", ctx)
+	ret0, _ := ret[0].(*domains.DatabaseMetadata)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDatabaseMetadata indicates an expected call of GetDatabaseMetadata.
+func (mr *MockClientDatabasePortMockRecorder) GetDatabaseMetadata(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDatabaseMetadata", reflect.TypeOf((*MockClientDatabasePort)(nil).GetDatabaseMetadata), ctx)
 }

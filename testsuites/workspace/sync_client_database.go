@@ -43,8 +43,32 @@ func UnitTestSyncClientDatabase(
 	mockChecksum := "checksum_abc"
 	mockChecksum2 := "checksum_def"
 
-	mockResult := []map[string]any{
-		{"tenant_id": mockTenantID, "checksum": mockChecksum},
+	mockResult := &domains.Workspace{
+		TenantID: mockTenantID,
+		Checksum: mockChecksum,
+	}
+
+	mockTableName := "mock_tables"
+	mockColumnName := "mock_column"
+
+	mockMetadata := &domains.DatabaseMetadata{
+		TenantID: mockTenantID,
+		Tables: []domains.Table{
+			{
+				Name: mockTableName,
+				Columns: []domains.Column{
+					{
+						Name:         mockColumnName,
+						Type:         "VARCHAR",
+						Nullable:     false,
+						Default:      "",
+						IsPrimaryKey: true,
+						IsForeignKey: false,
+						Comments:     "",
+					},
+				},
+			},
+		},
 	}
 
 	tests := []struct {
@@ -81,8 +105,8 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockClientDatabaseAdapter.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
-					Return(gomock.Any(), nil)
+					GetDatabaseMetadata(gomock.Any()).
+					Return(mockMetadata, nil)
 				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
@@ -124,8 +148,8 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockClientDatabaseAdapter.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
-					Return(gomock.Any(), nil)
+					GetDatabaseMetadata(gomock.Any()).
+					Return(mockMetadata, nil)
 				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
@@ -167,8 +191,8 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockClientDatabaseAdapter.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
-					Return(gomock.Any(), nil)
+					GetDatabaseMetadata(gomock.Any()).
+					Return(mockMetadata, nil)
 				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
@@ -210,8 +234,8 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockClientDatabaseAdapter.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
-					Return(gomock.Any(), nil)
+					GetDatabaseMetadata(gomock.Any()).
+					Return(mockMetadata, nil)
 				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
@@ -248,8 +272,8 @@ func UnitTestSyncClientDatabase(
 					Return(nil)
 				mockClientDatabaseAdapter.
 					EXPECT().
-					Execute(gomock.Any(), gomock.Any()).
-					Return(gomock.Any(), nil)
+					GetDatabaseMetadata(gomock.Any()).
+					Return(mockMetadata, nil)
 				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
