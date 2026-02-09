@@ -10,7 +10,7 @@
 - [x] Set up testing framework (testing, testify)
 - [x] Create mock generation scripts (mockgen)
 - [x] IngestionService.VectorizeAndStoreService unit tests
-- [-] QueryService.PromptToQueryData Unit Tests (in progress: positive case done, negative case pending)
+- [x] QueryService.PromptToQueryData Unit Tests
 - [x] WorkspaceService.SyncClientDatabase Unit Tests
 - [ ] WorkspaceService.GetByTenantID Unit Tests
 - [ ] WorkspaceService.ListAll Unit Tests
@@ -22,11 +22,11 @@
 
 ## Phase 4: Core Services - Query
 - [x] Implement QueryService Constructor
-- [ ] PromptToQueryData Implementation
+- [x] PromptToQueryData Implementation
 
 ## Phase 5: Core Services - Workspace
-- [ ] Implement WorkspaceService Constructor
-- [ ] SyncClientDatabase Implementation
+- [x] Implement WorkspaceService Constructor
+- [x] SyncClientDatabase Implementation
 - [ ] GetByTenantID Implementation
 - [ ] ListAll Implementation
 - [ ] Delete Implementation

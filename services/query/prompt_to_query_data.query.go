@@ -35,11 +35,11 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 
 	if withData && workspace != nil {
 		decryptedURL, decErr := s.encryptAdapter.Decrypt(workspace.EncryptedDBURL)
-		if decErr == nil {
-			// Try to connect to client database
-			if connErr := s.clientDatabaseAdapter.Connect(ctx, decryptedURL); connErr == nil {
-				clientDBConnected = true
-			}
+		if decErr != nil {
+			return nil, decErr
+		}
+		if connErr := s.clientDatabaseAdapter.Connect(ctx, decryptedURL); connErr == nil {
+			clientDBConnected = true
 		}
 	}
 

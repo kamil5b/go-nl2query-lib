@@ -328,6 +328,155 @@ func UnitTestPromptToQueryData(
 			},
 			expectError: ports.StatusInProgressError,
 		},
+		{
+			name:     "err get status",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusError, nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:     "err connect internal DB",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					Connect(gomock.Any(), mockTenantID).
+					Return(errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:     "err executing internal DB get workspace",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					Connect(gomock.Any(), mockTenantID).
+					Return(nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
+					Return(nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:     "err decrypt database URL",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					Connect(gomock.Any(), mockTenantID).
+					Return(nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
+					Return(mockWorkspace, nil)
+				mockEncryptAdapter.
+					EXPECT().
+					Decrypt(mockEncryptedDBUrl).
+					Return("", errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:     "err embed prompt",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					Connect(gomock.Any(), mockTenantID).
+					Return(nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
+					Return(mockWorkspace, nil)
+				mockEmbedderAdapter.
+					EXPECT().
+					Embed(gomock.Any(), mockString).
+					Return(nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:     "err vector store search",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					Connect(gomock.Any(), mockTenantID).
+					Return(nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
+					Return(mockWorkspace, nil)
+				mockEmbedderAdapter.
+					EXPECT().
+					Embed(gomock.Any(), mockString).
+					Return(mockVector, nil)
+				mockVectorStoreAdapter.
+					EXPECT().
+					Search(gomock.Any(), mockTenantID, mockVector, gomock.Any()).
+					Return(nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name:     "err generate query initial",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					Connect(gomock.Any(), mockTenantID).
+					Return(nil)
+				mockInternalDatabaseAdapter.
+					EXPECT().
+					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
+					Return(mockWorkspace, nil)
+				mockEmbedderAdapter.
+					EXPECT().
+					Embed(gomock.Any(), mockString).
+					Return(mockVector, nil)
+				mockVectorStoreAdapter.
+					EXPECT().
+					Search(gomock.Any(), mockTenantID, mockVector, gomock.Any()).
+					Return(mockVentorEntity, nil)
+				mockLLMAdapter.
+					EXPECT().
+					GenerateQuery(gomock.Any(), mockString, mockVentorEntity).
+					Return(nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
 	}
 
 	for _, tt := range tests {
