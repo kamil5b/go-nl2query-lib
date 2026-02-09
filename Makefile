@@ -26,10 +26,10 @@ coverage:
 mocks-install:
 	go install github.com/golang/mock/mockgen@latest
 
-clear-mocks:
+clear-mocks-old:
 	rm -rf mocks/*
 
-mocks: mocks-install clear-mocks
+mocks-old: mocks-install clear-mocks-old
 	mkdir -p mocks
 	@find internal/domain -name "*.go" -type f | grep -E "(service|repository)" | while read file; do \
 		filename=$$(basename $$file .go); \
@@ -44,5 +44,15 @@ docker-down:
 
 run: build
 	./bin/api
+
+clear-mocks:
+	rm -rf testsuites/mocks/*
+
+mocks: mocks-install clear-mocks
+	mkdir -p testsuites/mocks
+	@find ports -name "*.go" -type f | while read file; do \
+		filename=$$(basename $$file .go); \
+		mockgen -source=$$file -destination=testsuites/mocks/mock_$$filename.go -package=mocks; \
+	done
 
 .DEFAULT_GOAL := help

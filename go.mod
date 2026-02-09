@@ -1,4 +1,4 @@
-module github.com/kamil5b/go-nl-sql
+module github.com/kamil5b/go-nl2query-lib
 
 go 1.25.6
 
