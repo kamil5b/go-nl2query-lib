@@ -2,6 +2,6 @@ package ports
 
 import "context"
 
-type TaskQueueService interface {
+type TaskQueuePort interface {
 	EnqueueIngestionTask(ctx context.Context, tenantID string, dbURL string) error
 }

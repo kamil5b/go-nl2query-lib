@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockClientDatabaseRepository is a mock of ClientDatabaseRepository interface.
-type MockClientDatabaseRepository struct {
+// MockClientDatabasePort is a mock of ClientDatabasePort interface.
+type MockClientDatabasePort struct {
 	ctrl     *gomock.Controller
-	recorder *MockClientDatabaseRepositoryMockRecorder
+	recorder *MockClientDatabasePortMockRecorder
 }
 
-// MockClientDatabaseRepositoryMockRecorder is the mock recorder for MockClientDatabaseRepository.
-type MockClientDatabaseRepositoryMockRecorder struct {
-	mock *MockClientDatabaseRepository
+// MockClientDatabasePortMockRecorder is the mock recorder for MockClientDatabasePort.
+type MockClientDatabasePortMockRecorder struct {
+	mock *MockClientDatabasePort
 }
 
-// NewMockClientDatabaseRepository creates a new mock instance.
-func NewMockClientDatabaseRepository(ctrl *gomock.Controller) *MockClientDatabaseRepository {
-	mock := &MockClientDatabaseRepository{ctrl: ctrl}
-	mock.recorder = &MockClientDatabaseRepositoryMockRecorder{mock}
+// NewMockClientDatabasePort creates a new mock instance.
+func NewMockClientDatabasePort(ctrl *gomock.Controller) *MockClientDatabasePort {
+	mock := &MockClientDatabasePort{ctrl: ctrl}
+	mock.recorder = &MockClientDatabasePortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockClientDatabaseRepository) EXPECT() *MockClientDatabaseRepositoryMockRecorder {
+func (m *MockClientDatabasePort) EXPECT() *MockClientDatabasePortMockRecorder {
 	return m.recorder
 }
 
 // Close mocks base method.
-func (m *MockClientDatabaseRepository) Close() error {
+func (m *MockClientDatabasePort) Close() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Close")
 	ret0, _ := ret[0].(error)
@@ -43,13 +43,13 @@ func (m *MockClientDatabaseRepository) Close() error {
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockClientDatabaseRepositoryMockRecorder) Close() *gomock.Call {
+func (mr *MockClientDatabasePortMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockClientDatabaseRepository)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockClientDatabasePort)(nil).Close))
 }
 
 // Connect mocks base method.
-func (m *MockClientDatabaseRepository) Connect(ctx context.Context, dbURL string) error {
+func (m *MockClientDatabasePort) Connect(ctx context.Context, dbURL string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Connect", ctx, dbURL)
 	ret0, _ := ret[0].(error)
@@ -57,13 +57,13 @@ func (m *MockClientDatabaseRepository) Connect(ctx context.Context, dbURL string
 }
 
 // Connect indicates an expected call of Connect.
-func (mr *MockClientDatabaseRepositoryMockRecorder) Connect(ctx, dbURL interface{}) *gomock.Call {
+func (mr *MockClientDatabasePortMockRecorder) Connect(ctx, dbURL interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockClientDatabaseRepository)(nil).Connect), ctx, dbURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockClientDatabasePort)(nil).Connect), ctx, dbURL)
 }
 
 // Execute mocks base method.
-func (m *MockClientDatabaseRepository) Execute(ctx context.Context, query string) ([]map[string]any, error) {
+func (m *MockClientDatabasePort) Execute(ctx context.Context, query string) ([]map[string]any, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", ctx, query)
 	ret0, _ := ret[0].([]map[string]any)
@@ -72,13 +72,13 @@ func (m *MockClientDatabaseRepository) Execute(ctx context.Context, query string
 }
 
 // Execute indicates an expected call of Execute.
-func (mr *MockClientDatabaseRepositoryMockRecorder) Execute(ctx, query interface{}) *gomock.Call {
+func (mr *MockClientDatabasePortMockRecorder) Execute(ctx, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockClientDatabaseRepository)(nil).Execute), ctx, query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockClientDatabasePort)(nil).Execute), ctx, query)
 }
 
 // ExecuteDryRun mocks base method.
-func (m *MockClientDatabaseRepository) ExecuteDryRun(ctx context.Context, query string) error {
+func (m *MockClientDatabasePort) ExecuteDryRun(ctx context.Context, query string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ExecuteDryRun", ctx, query)
 	ret0, _ := ret[0].(error)
@@ -86,7 +86,7 @@ func (m *MockClientDatabaseRepository) ExecuteDryRun(ctx context.Context, query 
 }
 
 // ExecuteDryRun indicates an expected call of ExecuteDryRun.
-func (mr *MockClientDatabaseRepositoryMockRecorder) ExecuteDryRun(ctx, query interface{}) *gomock.Call {
+func (mr *MockClientDatabasePortMockRecorder) ExecuteDryRun(ctx, query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteDryRun", reflect.TypeOf((*MockClientDatabaseRepository)(nil).ExecuteDryRun), ctx, query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteDryRun", reflect.TypeOf((*MockClientDatabasePort)(nil).ExecuteDryRun), ctx, query)
 }

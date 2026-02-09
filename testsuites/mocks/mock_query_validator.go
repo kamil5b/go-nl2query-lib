@@ -10,31 +10,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockQueryValidatorRepository is a mock of QueryValidatorRepository interface.
-type MockQueryValidatorRepository struct {
+// MockQueryValidatorPort is a mock of QueryValidatorPort interface.
+type MockQueryValidatorPort struct {
 	ctrl     *gomock.Controller
-	recorder *MockQueryValidatorRepositoryMockRecorder
+	recorder *MockQueryValidatorPortMockRecorder
 }
 
-// MockQueryValidatorRepositoryMockRecorder is the mock recorder for MockQueryValidatorRepository.
-type MockQueryValidatorRepositoryMockRecorder struct {
-	mock *MockQueryValidatorRepository
+// MockQueryValidatorPortMockRecorder is the mock recorder for MockQueryValidatorPort.
+type MockQueryValidatorPortMockRecorder struct {
+	mock *MockQueryValidatorPort
 }
 
-// NewMockQueryValidatorRepository creates a new mock instance.
-func NewMockQueryValidatorRepository(ctrl *gomock.Controller) *MockQueryValidatorRepository {
-	mock := &MockQueryValidatorRepository{ctrl: ctrl}
-	mock.recorder = &MockQueryValidatorRepositoryMockRecorder{mock}
+// NewMockQueryValidatorPort creates a new mock instance.
+func NewMockQueryValidatorPort(ctrl *gomock.Controller) *MockQueryValidatorPort {
+	mock := &MockQueryValidatorPort{ctrl: ctrl}
+	mock.recorder = &MockQueryValidatorPortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockQueryValidatorRepository) EXPECT() *MockQueryValidatorRepositoryMockRecorder {
+func (m *MockQueryValidatorPort) EXPECT() *MockQueryValidatorPortMockRecorder {
 	return m.recorder
 }
 
 // ContainsDDLDML mocks base method.
-func (m *MockQueryValidatorRepository) ContainsDDLDML(query string) bool {
+func (m *MockQueryValidatorPort) ContainsDDLDML(query string) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ContainsDDLDML", query)
 	ret0, _ := ret[0].(bool)
@@ -42,13 +42,13 @@ func (m *MockQueryValidatorRepository) ContainsDDLDML(query string) bool {
 }
 
 // ContainsDDLDML indicates an expected call of ContainsDDLDML.
-func (mr *MockQueryValidatorRepositoryMockRecorder) ContainsDDLDML(query interface{}) *gomock.Call {
+func (mr *MockQueryValidatorPortMockRecorder) ContainsDDLDML(query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ContainsDDLDML", reflect.TypeOf((*MockQueryValidatorRepository)(nil).ContainsDDLDML), query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ContainsDDLDML", reflect.TypeOf((*MockQueryValidatorPort)(nil).ContainsDDLDML), query)
 }
 
 // IsSafe mocks base method.
-func (m *MockQueryValidatorRepository) IsSafe(query string) (bool, error) {
+func (m *MockQueryValidatorPort) IsSafe(query string) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "IsSafe", query)
 	ret0, _ := ret[0].(bool)
@@ -57,7 +57,7 @@ func (m *MockQueryValidatorRepository) IsSafe(query string) (bool, error) {
 }
 
 // IsSafe indicates an expected call of IsSafe.
-func (mr *MockQueryValidatorRepositoryMockRecorder) IsSafe(query interface{}) *gomock.Call {
+func (mr *MockQueryValidatorPortMockRecorder) IsSafe(query interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSafe", reflect.TypeOf((*MockQueryValidatorRepository)(nil).IsSafe), query)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsSafe", reflect.TypeOf((*MockQueryValidatorPort)(nil).IsSafe), query)
 }

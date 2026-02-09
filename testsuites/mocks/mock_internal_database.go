@@ -12,31 +12,31 @@ import (
 	domains "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
-// MockInternalDatabaseRepository is a mock of InternalDatabaseRepository interface.
-type MockInternalDatabaseRepository struct {
+// MockInternalDatabasePort is a mock of InternalDatabasePort interface.
+type MockInternalDatabasePort struct {
 	ctrl     *gomock.Controller
-	recorder *MockInternalDatabaseRepositoryMockRecorder
+	recorder *MockInternalDatabasePortMockRecorder
 }
 
-// MockInternalDatabaseRepositoryMockRecorder is the mock recorder for MockInternalDatabaseRepository.
-type MockInternalDatabaseRepositoryMockRecorder struct {
-	mock *MockInternalDatabaseRepository
+// MockInternalDatabasePortMockRecorder is the mock recorder for MockInternalDatabasePort.
+type MockInternalDatabasePortMockRecorder struct {
+	mock *MockInternalDatabasePort
 }
 
-// NewMockInternalDatabaseRepository creates a new mock instance.
-func NewMockInternalDatabaseRepository(ctrl *gomock.Controller) *MockInternalDatabaseRepository {
-	mock := &MockInternalDatabaseRepository{ctrl: ctrl}
-	mock.recorder = &MockInternalDatabaseRepositoryMockRecorder{mock}
+// NewMockInternalDatabasePort creates a new mock instance.
+func NewMockInternalDatabasePort(ctrl *gomock.Controller) *MockInternalDatabasePort {
+	mock := &MockInternalDatabasePort{ctrl: ctrl}
+	mock.recorder = &MockInternalDatabasePortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockInternalDatabaseRepository) EXPECT() *MockInternalDatabaseRepositoryMockRecorder {
+func (m *MockInternalDatabasePort) EXPECT() *MockInternalDatabasePortMockRecorder {
 	return m.recorder
 }
 
 // Close mocks base method.
-func (m *MockInternalDatabaseRepository) Close() error {
+func (m *MockInternalDatabasePort) Close() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Close")
 	ret0, _ := ret[0].(error)
@@ -44,13 +44,13 @@ func (m *MockInternalDatabaseRepository) Close() error {
 }
 
 // Close indicates an expected call of Close.
-func (mr *MockInternalDatabaseRepositoryMockRecorder) Close() *gomock.Call {
+func (mr *MockInternalDatabasePortMockRecorder) Close() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockInternalDatabaseRepository)(nil).Close))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockInternalDatabasePort)(nil).Close))
 }
 
 // Connect mocks base method.
-func (m *MockInternalDatabaseRepository) Connect(ctx context.Context, dbURL string) error {
+func (m *MockInternalDatabasePort) Connect(ctx context.Context, dbURL string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Connect", ctx, dbURL)
 	ret0, _ := ret[0].(error)
@@ -58,13 +58,13 @@ func (m *MockInternalDatabaseRepository) Connect(ctx context.Context, dbURL stri
 }
 
 // Connect indicates an expected call of Connect.
-func (mr *MockInternalDatabaseRepositoryMockRecorder) Connect(ctx, dbURL interface{}) *gomock.Call {
+func (mr *MockInternalDatabasePortMockRecorder) Connect(ctx, dbURL interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockInternalDatabaseRepository)(nil).Connect), ctx, dbURL)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockInternalDatabasePort)(nil).Connect), ctx, dbURL)
 }
 
 // GetWorkspaceByTenantID mocks base method.
-func (m *MockInternalDatabaseRepository) GetWorkspaceByTenantID(ctx context.Context, tenantID string) (*domains.Workspace, error) {
+func (m *MockInternalDatabasePort) GetWorkspaceByTenantID(ctx context.Context, tenantID string) (*domains.Workspace, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetWorkspaceByTenantID", ctx, tenantID)
 	ret0, _ := ret[0].(*domains.Workspace)
@@ -73,13 +73,13 @@ func (m *MockInternalDatabaseRepository) GetWorkspaceByTenantID(ctx context.Cont
 }
 
 // GetWorkspaceByTenantID indicates an expected call of GetWorkspaceByTenantID.
-func (mr *MockInternalDatabaseRepositoryMockRecorder) GetWorkspaceByTenantID(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockInternalDatabasePortMockRecorder) GetWorkspaceByTenantID(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspaceByTenantID", reflect.TypeOf((*MockInternalDatabaseRepository)(nil).GetWorkspaceByTenantID), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspaceByTenantID", reflect.TypeOf((*MockInternalDatabasePort)(nil).GetWorkspaceByTenantID), ctx, tenantID)
 }
 
 // UpsertWorkspace mocks base method.
-func (m *MockInternalDatabaseRepository) UpsertWorkspace(ctx context.Context, workspace *domains.Workspace) error {
+func (m *MockInternalDatabasePort) UpsertWorkspace(ctx context.Context, workspace *domains.Workspace) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpsertWorkspace", ctx, workspace)
 	ret0, _ := ret[0].(error)
@@ -87,7 +87,7 @@ func (m *MockInternalDatabaseRepository) UpsertWorkspace(ctx context.Context, wo
 }
 
 // UpsertWorkspace indicates an expected call of UpsertWorkspace.
-func (mr *MockInternalDatabaseRepositoryMockRecorder) UpsertWorkspace(ctx, workspace interface{}) *gomock.Call {
+func (mr *MockInternalDatabasePortMockRecorder) UpsertWorkspace(ctx, workspace interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertWorkspace", reflect.TypeOf((*MockInternalDatabaseRepository)(nil).UpsertWorkspace), ctx, workspace)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpsertWorkspace", reflect.TypeOf((*MockInternalDatabasePort)(nil).UpsertWorkspace), ctx, workspace)
 }

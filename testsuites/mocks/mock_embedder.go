@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockEmbedderRepository is a mock of EmbedderRepository interface.
-type MockEmbedderRepository struct {
+// MockEmbedderPort is a mock of EmbedderPort interface.
+type MockEmbedderPort struct {
 	ctrl     *gomock.Controller
-	recorder *MockEmbedderRepositoryMockRecorder
+	recorder *MockEmbedderPortMockRecorder
 }
 
-// MockEmbedderRepositoryMockRecorder is the mock recorder for MockEmbedderRepository.
-type MockEmbedderRepositoryMockRecorder struct {
-	mock *MockEmbedderRepository
+// MockEmbedderPortMockRecorder is the mock recorder for MockEmbedderPort.
+type MockEmbedderPortMockRecorder struct {
+	mock *MockEmbedderPort
 }
 
-// NewMockEmbedderRepository creates a new mock instance.
-func NewMockEmbedderRepository(ctrl *gomock.Controller) *MockEmbedderRepository {
-	mock := &MockEmbedderRepository{ctrl: ctrl}
-	mock.recorder = &MockEmbedderRepositoryMockRecorder{mock}
+// NewMockEmbedderPort creates a new mock instance.
+func NewMockEmbedderPort(ctrl *gomock.Controller) *MockEmbedderPort {
+	mock := &MockEmbedderPort{ctrl: ctrl}
+	mock.recorder = &MockEmbedderPortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockEmbedderRepository) EXPECT() *MockEmbedderRepositoryMockRecorder {
+func (m *MockEmbedderPort) EXPECT() *MockEmbedderPortMockRecorder {
 	return m.recorder
 }
 
 // Embed mocks base method.
-func (m *MockEmbedderRepository) Embed(ctx context.Context, text string) ([]float32, error) {
+func (m *MockEmbedderPort) Embed(ctx context.Context, text string) ([]float32, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Embed", ctx, text)
 	ret0, _ := ret[0].([]float32)
@@ -44,13 +44,13 @@ func (m *MockEmbedderRepository) Embed(ctx context.Context, text string) ([]floa
 }
 
 // Embed indicates an expected call of Embed.
-func (mr *MockEmbedderRepositoryMockRecorder) Embed(ctx, text interface{}) *gomock.Call {
+func (mr *MockEmbedderPortMockRecorder) Embed(ctx, text interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Embed", reflect.TypeOf((*MockEmbedderRepository)(nil).Embed), ctx, text)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Embed", reflect.TypeOf((*MockEmbedderPort)(nil).Embed), ctx, text)
 }
 
 // EmbedBatch mocks base method.
-func (m *MockEmbedderRepository) EmbedBatch(ctx context.Context, texts []string) ([][]float32, error) {
+func (m *MockEmbedderPort) EmbedBatch(ctx context.Context, texts []string) ([][]float32, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EmbedBatch", ctx, texts)
 	ret0, _ := ret[0].([][]float32)
@@ -59,7 +59,7 @@ func (m *MockEmbedderRepository) EmbedBatch(ctx context.Context, texts []string)
 }
 
 // EmbedBatch indicates an expected call of EmbedBatch.
-func (mr *MockEmbedderRepositoryMockRecorder) EmbedBatch(ctx, texts interface{}) *gomock.Call {
+func (mr *MockEmbedderPortMockRecorder) EmbedBatch(ctx, texts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmbedBatch", reflect.TypeOf((*MockEmbedderRepository)(nil).EmbedBatch), ctx, texts)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EmbedBatch", reflect.TypeOf((*MockEmbedderPort)(nil).EmbedBatch), ctx, texts)
 }

@@ -20,25 +20,25 @@ import (
 func UnitTestPromptToQueryData(
 	t *testing.T,
 	svcImp func(
-		statusRepo ports.StatusRepository,
-		clientDatabaseRepo ports.ClientDatabaseRepository,
-		internalDatabaseRepo ports.InternalDatabaseRepository,
-		encryptRepo ports.EncryptRepository,
-		embedderRepo ports.EmbedderRepository,
-		vectorStoreRepo ports.VectorStoreRepository,
-		LLMRepo ports.LLMRepository,
-		QueryValidator ports.QueryValidatorRepository,
+		statusAdapter ports.StatusPort,
+		clientDatabaseAdapter ports.ClientDatabasePort,
+		internalDatabaseAdapter ports.InternalDatabasePort,
+		encryptAdapter ports.EncryptPort,
+		embedderAdapter ports.EmbedderPort,
+		vectorStoreAdapter ports.VectorStorePort,
+		LLMAdapter ports.LLMPort,
+		QueryValidator ports.QueryValidatorPort,
 	) ports.QueryService,
 ) {
 	var (
-		mockStatusRepo           *mocks.MockStatusRepository
-		mockClientDatabaseRepo   *mocks.MockClientDatabaseRepository
-		mockInternalDatabaseRepo *mocks.MockInternalDatabaseRepository
-		mockEncryptRepo          *mocks.MockEncryptRepository
-		mockEmbedderRepo         *mocks.MockEmbedderRepository
-		mockVectorStoreRepo      *mocks.MockVectorStoreRepository
-		mockLLMRepo              *mocks.MockLLMRepository
-		mockQueryValidatorRepo   *mocks.MockQueryValidatorRepository
+		mockStatusAdapter           *mocks.MockStatusPort
+		mockClientDatabaseAdapter   *mocks.MockClientDatabasePort
+		mockInternalDatabaseAdapter *mocks.MockInternalDatabasePort
+		mockEncryptAdapter          *mocks.MockEncryptPort
+		mockEmbedderAdapter         *mocks.MockEmbedderPort
+		mockVectorStoreAdapter      *mocks.MockVectorStorePort
+		mockLLMAdapter              *mocks.MockLLMPort
+		mockQueryValidatorAdapter   *mocks.MockQueryValidatorPort
 	)
 
 	mockString := "mocked string prompt"
@@ -72,73 +72,73 @@ func UnitTestPromptToQueryData(
 			name:     "success with data and full route with loops",
 			withData: true,
 			prepareMock: func() {
-				mockStatusRepo.
+				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
 					Return(nil, nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Decrypt(mockEncryptedDBUrl).
 					Return(mockURL, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockURL).
 					Return(nil)
-				mockEmbedderRepo.
+				mockEmbedderAdapter.
 					EXPECT().
 					Embed(gomock.Any(), mockString).
 					Return(mockVector, nil)
-				mockVectorStoreRepo.
+				mockVectorStoreAdapter.
 					EXPECT().
 					Search(gomock.Any(), mockTenantID, mockVector, gomock.Any()).
 					Return(mockVentorEntity, nil)
 				// === Start loop of generating query until safe ===
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity).
 					Return(&mockQueryResultErrSyntax, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
 					Return(errors.New("syntax error"))
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
 					Return(&mockQueryResultErr, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErr).
 					Return(nil)
 				// End loop
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					ContainsDDLDML(mockQueryResultErr).
 					Return(false)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), mockQueryResultErr).
 					Return(nil, errors.New("execution error"))
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("execution error").Error()).
 					Return(&mockQueryResult, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResult).
 					Return(nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					ContainsDDLDML(mockQueryResult).
 					Return(false)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), mockQueryResult).
 					Return(nil, errors.New("execution error"))
@@ -149,69 +149,69 @@ func UnitTestPromptToQueryData(
 			name:     "success with data and full route with loops but final DDL/DML warning so no data execution",
 			withData: true,
 			prepareMock: func() {
-				mockStatusRepo.
+				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
 					Return(nil, nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Decrypt(mockEncryptedDBUrl).
 					Return(mockURL, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockURL).
 					Return(nil)
-				mockEmbedderRepo.
+				mockEmbedderAdapter.
 					EXPECT().
 					Embed(gomock.Any(), mockString).
 					Return(mockVector, nil)
-				mockVectorStoreRepo.
+				mockVectorStoreAdapter.
 					EXPECT().
 					Search(gomock.Any(), mockTenantID, mockVector, gomock.Any()).
 					Return(mockVentorEntity, nil)
 				// === Start loop of generating query until safe ===
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity).
 					Return(&mockQueryResultErrSyntax, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
 					Return(errors.New("syntax error"))
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
 					Return(&mockQueryResultErr, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErr).
 					Return(nil)
 				// End loop
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					ContainsDDLDML(mockQueryResultErr).
 					Return(false)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), mockQueryResultErr).
 					Return(nil, errors.New("execution error"))
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("execution error").Error()).
 					Return(&mockQueryResult, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResult).
 					Return(nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					ContainsDDLDML(mockQueryResult).
 					Return(true) // This time contains DDL/DML, Warn will be returned but 200
@@ -222,48 +222,48 @@ func UnitTestPromptToQueryData(
 			name:     "success with data and full route with loops but fail to connect client database",
 			withData: true,
 			prepareMock: func() {
-				mockStatusRepo.
+				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
 					Return(nil, nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Decrypt(mockEncryptedDBUrl).
 					Return(mockURL, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockURL).
 					Return(errors.New("connection error"))
-				mockEmbedderRepo.
+				mockEmbedderAdapter.
 					EXPECT().
 					Embed(gomock.Any(), mockString).
 					Return(mockVector, nil)
-				mockVectorStoreRepo.
+				mockVectorStoreAdapter.
 					EXPECT().
 					Search(gomock.Any(), mockTenantID, mockVector, gomock.Any()).
 					Return(mockVentorEntity, nil)
 				// === Start loop of generating query until safe ===
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity).
 					Return(&mockQueryResultErrSyntax, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
 					Return(errors.New("syntax error"))
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
 					Return(&mockQueryResultErr, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErr).
 					Return(nil)
@@ -275,40 +275,40 @@ func UnitTestPromptToQueryData(
 			name:     "success with data and full route with loops but expected no data",
 			withData: false,
 			prepareMock: func() {
-				mockStatusRepo.
+				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
 					Return(nil, nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockEmbedderRepo.
+				mockEmbedderAdapter.
 					EXPECT().
 					Embed(gomock.Any(), mockString).
 					Return(mockVector, nil)
-				mockVectorStoreRepo.
+				mockVectorStoreAdapter.
 					EXPECT().
 					Search(gomock.Any(), mockTenantID, mockVector, gomock.Any()).
 					Return(mockVentorEntity, nil)
 				// === Start loop of generating query until safe ===
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity).
 					Return(&mockQueryResultErrSyntax, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
 					Return(errors.New("syntax error"))
-				mockLLMRepo.
+				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
 					Return(&mockQueryResult, nil)
-				mockQueryValidatorRepo.
+				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResult).
 					Return(nil)
@@ -323,24 +323,24 @@ func UnitTestPromptToQueryData(
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mockStatusRepo = mocks.NewMockStatusRepository(ctrl)
-			mockClientDatabaseRepo = mocks.NewMockClientDatabaseRepository(ctrl)
-			mockInternalDatabaseRepo = mocks.NewMockInternalDatabaseRepository(ctrl)
-			mockEncryptRepo = mocks.NewMockEncryptRepository(ctrl)
-			mockEmbedderRepo = mocks.NewMockEmbedderRepository(ctrl)
-			mockVectorStoreRepo = mocks.NewMockVectorStoreRepository(ctrl)
-			mockLLMRepo = mocks.NewMockLLMRepository(ctrl)
-			mockQueryValidatorRepo = mocks.NewMockQueryValidatorRepository(ctrl)
+			mockStatusAdapter = mocks.NewMockStatusPort(ctrl)
+			mockClientDatabaseAdapter = mocks.NewMockClientDatabasePort(ctrl)
+			mockInternalDatabaseAdapter = mocks.NewMockInternalDatabasePort(ctrl)
+			mockEncryptAdapter = mocks.NewMockEncryptPort(ctrl)
+			mockEmbedderAdapter = mocks.NewMockEmbedderPort(ctrl)
+			mockVectorStoreAdapter = mocks.NewMockVectorStorePort(ctrl)
+			mockLLMAdapter = mocks.NewMockLLMPort(ctrl)
+			mockQueryValidatorAdapter = mocks.NewMockQueryValidatorPort(ctrl)
 
 			svc := svcImp(
-				mockStatusRepo,
-				mockClientDatabaseRepo,
-				mockInternalDatabaseRepo,
-				mockEncryptRepo,
-				mockEmbedderRepo,
-				mockVectorStoreRepo,
-				mockLLMRepo,
-				mockQueryValidatorRepo,
+				mockStatusAdapter,
+				mockClientDatabaseAdapter,
+				mockInternalDatabaseAdapter,
+				mockEncryptAdapter,
+				mockEmbedderAdapter,
+				mockVectorStoreAdapter,
+				mockLLMAdapter,
+				mockQueryValidatorAdapter,
 			)
 
 			if tt.prepareMock != nil {

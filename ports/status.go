@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type StatusRepository interface {
+type StatusPort interface {
 	SetInProgress(ctx context.Context, tenantID string) error
 	SetDone(ctx context.Context, tenantID string) error
 	SetError(ctx context.Context, tenantID string, message string) error

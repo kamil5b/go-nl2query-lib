@@ -10,31 +10,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockEncryptRepository is a mock of EncryptRepository interface.
-type MockEncryptRepository struct {
+// MockEncryptPort is a mock of EncryptPort interface.
+type MockEncryptPort struct {
 	ctrl     *gomock.Controller
-	recorder *MockEncryptRepositoryMockRecorder
+	recorder *MockEncryptPortMockRecorder
 }
 
-// MockEncryptRepositoryMockRecorder is the mock recorder for MockEncryptRepository.
-type MockEncryptRepositoryMockRecorder struct {
-	mock *MockEncryptRepository
+// MockEncryptPortMockRecorder is the mock recorder for MockEncryptPort.
+type MockEncryptPortMockRecorder struct {
+	mock *MockEncryptPort
 }
 
-// NewMockEncryptRepository creates a new mock instance.
-func NewMockEncryptRepository(ctrl *gomock.Controller) *MockEncryptRepository {
-	mock := &MockEncryptRepository{ctrl: ctrl}
-	mock.recorder = &MockEncryptRepositoryMockRecorder{mock}
+// NewMockEncryptPort creates a new mock instance.
+func NewMockEncryptPort(ctrl *gomock.Controller) *MockEncryptPort {
+	mock := &MockEncryptPort{ctrl: ctrl}
+	mock.recorder = &MockEncryptPortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockEncryptRepository) EXPECT() *MockEncryptRepositoryMockRecorder {
+func (m *MockEncryptPort) EXPECT() *MockEncryptPortMockRecorder {
 	return m.recorder
 }
 
 // Decrypt mocks base method.
-func (m *MockEncryptRepository) Decrypt(cipherText string) (string, error) {
+func (m *MockEncryptPort) Decrypt(cipherText string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Decrypt", cipherText)
 	ret0, _ := ret[0].(string)
@@ -43,13 +43,13 @@ func (m *MockEncryptRepository) Decrypt(cipherText string) (string, error) {
 }
 
 // Decrypt indicates an expected call of Decrypt.
-func (mr *MockEncryptRepositoryMockRecorder) Decrypt(cipherText interface{}) *gomock.Call {
+func (mr *MockEncryptPortMockRecorder) Decrypt(cipherText interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Decrypt", reflect.TypeOf((*MockEncryptRepository)(nil).Decrypt), cipherText)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Decrypt", reflect.TypeOf((*MockEncryptPort)(nil).Decrypt), cipherText)
 }
 
 // Encrypt mocks base method.
-func (m *MockEncryptRepository) Encrypt(plainText string) string {
+func (m *MockEncryptPort) Encrypt(plainText string) string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Encrypt", plainText)
 	ret0, _ := ret[0].(string)
@@ -57,7 +57,7 @@ func (m *MockEncryptRepository) Encrypt(plainText string) string {
 }
 
 // Encrypt indicates an expected call of Encrypt.
-func (mr *MockEncryptRepositoryMockRecorder) Encrypt(plainText interface{}) *gomock.Call {
+func (mr *MockEncryptPortMockRecorder) Encrypt(plainText interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Encrypt", reflect.TypeOf((*MockEncryptRepository)(nil).Encrypt), plainText)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Encrypt", reflect.TypeOf((*MockEncryptPort)(nil).Encrypt), plainText)
 }

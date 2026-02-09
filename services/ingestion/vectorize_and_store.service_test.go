@@ -8,7 +8,7 @@ import (
 )
 
 func TestIngestionService_VectorizeAndStore(t *testing.T) {
-	ingestionTest.UnitTestVectorizeAndStore(t, func(embedderRepo ports.EmbedderRepository, vectorStoreRepo ports.VectorStoreRepository, statusRepo ports.StatusRepository) ports.IngestionService {
-		return NewIngestionService(nil, embedderRepo, vectorStoreRepo, statusRepo)
+	ingestionTest.UnitTestVectorizeAndStore(t, func(embedderAdapter ports.EmbedderPort, vectorStoreAdapter ports.VectorStorePort, statusAdapter ports.StatusPort) ports.IngestionService {
+		return NewIngestionService(nil, embedderAdapter, vectorStoreAdapter, statusAdapter)
 	}, metadataToTOON)
 }

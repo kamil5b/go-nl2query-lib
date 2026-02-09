@@ -12,31 +12,31 @@ import (
 	domains "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
-// MockVectorStoreRepository is a mock of VectorStoreRepository interface.
-type MockVectorStoreRepository struct {
+// MockVectorStorePort is a mock of VectorStorePort interface.
+type MockVectorStorePort struct {
 	ctrl     *gomock.Controller
-	recorder *MockVectorStoreRepositoryMockRecorder
+	recorder *MockVectorStorePortMockRecorder
 }
 
-// MockVectorStoreRepositoryMockRecorder is the mock recorder for MockVectorStoreRepository.
-type MockVectorStoreRepositoryMockRecorder struct {
-	mock *MockVectorStoreRepository
+// MockVectorStorePortMockRecorder is the mock recorder for MockVectorStorePort.
+type MockVectorStorePortMockRecorder struct {
+	mock *MockVectorStorePort
 }
 
-// NewMockVectorStoreRepository creates a new mock instance.
-func NewMockVectorStoreRepository(ctrl *gomock.Controller) *MockVectorStoreRepository {
-	mock := &MockVectorStoreRepository{ctrl: ctrl}
-	mock.recorder = &MockVectorStoreRepositoryMockRecorder{mock}
+// NewMockVectorStorePort creates a new mock instance.
+func NewMockVectorStorePort(ctrl *gomock.Controller) *MockVectorStorePort {
+	mock := &MockVectorStorePort{ctrl: ctrl}
+	mock.recorder = &MockVectorStorePortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockVectorStoreRepository) EXPECT() *MockVectorStoreRepositoryMockRecorder {
+func (m *MockVectorStorePort) EXPECT() *MockVectorStorePortMockRecorder {
 	return m.recorder
 }
 
 // Delete mocks base method.
-func (m *MockVectorStoreRepository) Delete(ctx context.Context, tenantID string) error {
+func (m *MockVectorStorePort) Delete(ctx context.Context, tenantID string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Delete", ctx, tenantID)
 	ret0, _ := ret[0].(error)
@@ -44,13 +44,13 @@ func (m *MockVectorStoreRepository) Delete(ctx context.Context, tenantID string)
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockVectorStoreRepositoryMockRecorder) Delete(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockVectorStorePortMockRecorder) Delete(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVectorStoreRepository)(nil).Delete), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockVectorStorePort)(nil).Delete), ctx, tenantID)
 }
 
 // Exists mocks base method.
-func (m *MockVectorStoreRepository) Exists(ctx context.Context, tenantID string) (bool, error) {
+func (m *MockVectorStorePort) Exists(ctx context.Context, tenantID string) (bool, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", ctx, tenantID)
 	ret0, _ := ret[0].(bool)
@@ -59,13 +59,13 @@ func (m *MockVectorStoreRepository) Exists(ctx context.Context, tenantID string)
 }
 
 // Exists indicates an expected call of Exists.
-func (mr *MockVectorStoreRepositoryMockRecorder) Exists(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockVectorStorePortMockRecorder) Exists(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockVectorStoreRepository)(nil).Exists), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockVectorStorePort)(nil).Exists), ctx, tenantID)
 }
 
 // Search mocks base method.
-func (m *MockVectorStoreRepository) Search(ctx context.Context, tenantID string, queryEmbedding []float32, limit int) ([]domains.Vector, error) {
+func (m *MockVectorStorePort) Search(ctx context.Context, tenantID string, queryEmbedding []float32, limit int) ([]domains.Vector, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Search", ctx, tenantID, queryEmbedding, limit)
 	ret0, _ := ret[0].([]domains.Vector)
@@ -74,13 +74,13 @@ func (m *MockVectorStoreRepository) Search(ctx context.Context, tenantID string,
 }
 
 // Search indicates an expected call of Search.
-func (mr *MockVectorStoreRepositoryMockRecorder) Search(ctx, tenantID, queryEmbedding, limit interface{}) *gomock.Call {
+func (mr *MockVectorStorePortMockRecorder) Search(ctx, tenantID, queryEmbedding, limit interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockVectorStoreRepository)(nil).Search), ctx, tenantID, queryEmbedding, limit)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockVectorStorePort)(nil).Search), ctx, tenantID, queryEmbedding, limit)
 }
 
 // Upsert mocks base method.
-func (m *MockVectorStoreRepository) Upsert(ctx context.Context, tenantID string, vectors []domains.Vector) error {
+func (m *MockVectorStorePort) Upsert(ctx context.Context, tenantID string, vectors []domains.Vector) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Upsert", ctx, tenantID, vectors)
 	ret0, _ := ret[0].(error)
@@ -88,7 +88,7 @@ func (m *MockVectorStoreRepository) Upsert(ctx context.Context, tenantID string,
 }
 
 // Upsert indicates an expected call of Upsert.
-func (mr *MockVectorStoreRepositoryMockRecorder) Upsert(ctx, tenantID, vectors interface{}) *gomock.Call {
+func (mr *MockVectorStorePortMockRecorder) Upsert(ctx, tenantID, vectors interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockVectorStoreRepository)(nil).Upsert), ctx, tenantID, vectors)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockVectorStorePort)(nil).Upsert), ctx, tenantID, vectors)
 }

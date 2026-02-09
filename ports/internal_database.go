@@ -6,7 +6,7 @@ import (
 	model "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
-type InternalDatabaseRepository interface {
+type InternalDatabasePort interface {
 	Connect(ctx context.Context, dbURL string) error
 	Close() error
 	GetWorkspaceByTenantID(ctx context.Context, tenantID string) (*model.Workspace, error)

@@ -14,24 +14,24 @@ import (
 // @example usage:
 //
 //	func TestWorkspaceService_SyncClientDatabase(t *testing.T) {
-//	    workspace.UnitTestSyncClientDatabase(t, New(embedderRepo, vectorStoreRepo, statusRepo))
+//	    workspace.UnitTestSyncClientDatabase(t, New(embedderAdapter, vectorStoreAdapter, statusAdapter))
 //	}
 func UnitTestSyncClientDatabase(
 	t *testing.T,
 	svcImp func(
-		clientDatabaseRepo ports.ClientDatabaseRepository,
-		internalDatabaseRepo ports.InternalDatabaseRepository,
-		encryptRepo ports.EncryptRepository,
-		hashRepo ports.HashRepository,
-		taskQueueService ports.TaskQueueService,
+		clientDatabaseAdapter ports.ClientDatabasePort,
+		internalDatabaseAdapter ports.InternalDatabasePort,
+		encryptAdapter ports.EncryptPort,
+		hashAdapter ports.HashPort,
+		taskQueueService ports.TaskQueuePort,
 	) ports.WorkspaceService,
 ) {
 	var (
-		mockClientDatabaseRepo   *mocks.MockClientDatabaseRepository
-		mockInternalDatabaseRepo *mocks.MockInternalDatabaseRepository
-		mockEncryptRepo          *mocks.MockEncryptRepository
-		mockHashRepo             *mocks.MockHashRepository
-		mockTaskQueueService     *mocks.MockTaskQueueService
+		mockClientDatabaseAdapter   *mocks.MockClientDatabasePort
+		mockInternalDatabaseAdapter *mocks.MockInternalDatabasePort
+		mockEncryptAdapter          *mocks.MockEncryptPort
+		mockHashAdapter             *mocks.MockHashPort
+		mockTaskQueuePort           *mocks.MockTaskQueuePort
 	)
 
 	mockString := "mocked string URL"
@@ -52,35 +52,35 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "success update",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
 					Return(nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return(mockChecksum2, nil)
-				mockTaskQueueService.
+				mockTaskQueuePort.
 					EXPECT().
 					EnqueueIngestionTask(gomock.Any(), mockTenantID, mockString).
 					Return(nil)
@@ -91,35 +91,35 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "success create",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(nil, nil) // No existing record
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
 					Return(nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return(mockChecksum, nil)
-				mockTaskQueueService.
+				mockTaskQueuePort.
 					EXPECT().
 					EnqueueIngestionTask(gomock.Any(), mockTenantID, mockString).
 					Return(nil)
@@ -130,35 +130,35 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "err enqueue ingestion task",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(nil, nil) // No existing record
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
 					Return(nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return(mockChecksum, nil)
-				mockTaskQueueService.
+				mockTaskQueuePort.
 					EXPECT().
 					EnqueueIngestionTask(gomock.Any(), mockTenantID, mockString).
 					Return(errors.New("err"))
@@ -169,31 +169,31 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "success with no changes",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
 					Return(nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return(mockChecksum, nil) // Match existing checksum
@@ -203,31 +203,31 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "error generate checksum",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
 					Return(nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), gomock.Any()).
 					Return(gomock.Any(), nil)
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateChecksum(gomock.Any()).
 					Return("", errors.New("err"))
@@ -237,23 +237,23 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "success with warn",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(mockResult, nil)
-				mockClientDatabaseRepo.
+				mockClientDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockString).
 					Return(errors.New("can't connect to client database")) // Simulate connection error
@@ -263,19 +263,19 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "err executing internal DB",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(nil)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
 					Return(nil, errors.New("err"))
@@ -285,15 +285,15 @@ func UnitTestSyncClientDatabase(
 		{
 			name: "err connect internal DB",
 			prepareMock: func() {
-				mockHashRepo.
+				mockHashAdapter.
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
-				mockEncryptRepo.
+				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
 					Return(mockEncryptedDBUrl)
-				mockInternalDatabaseRepo.
+				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), gomock.Any()).
 					Return(errors.New("err"))
@@ -307,18 +307,18 @@ func UnitTestSyncClientDatabase(
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mockClientDatabaseRepo = mocks.NewMockClientDatabaseRepository(ctrl)
-			mockInternalDatabaseRepo = mocks.NewMockInternalDatabaseRepository(ctrl)
-			mockEncryptRepo = mocks.NewMockEncryptRepository(ctrl)
-			mockHashRepo = mocks.NewMockHashRepository(ctrl)
-			mockTaskQueueService = mocks.NewMockTaskQueueService(ctrl)
+			mockClientDatabaseAdapter = mocks.NewMockClientDatabasePort(ctrl)
+			mockInternalDatabaseAdapter = mocks.NewMockInternalDatabasePort(ctrl)
+			mockEncryptAdapter = mocks.NewMockEncryptPort(ctrl)
+			mockHashAdapter = mocks.NewMockHashPort(ctrl)
+			mockTaskQueuePort = mocks.NewMockTaskQueuePort(ctrl)
 
 			svc := svcImp(
-				mockClientDatabaseRepo,
-				mockInternalDatabaseRepo,
-				mockEncryptRepo,
-				mockHashRepo,
-				mockTaskQueueService,
+				mockClientDatabaseAdapter,
+				mockInternalDatabaseAdapter,
+				mockEncryptAdapter,
+				mockHashAdapter,
+				mockTaskQueuePort,
 			)
 
 			if tt.prepareMock != nil {

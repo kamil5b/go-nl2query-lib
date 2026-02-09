@@ -15,21 +15,21 @@ import (
 // @example usage:
 //
 //	func TestIngestionService_VectorizeAndStore(t *testing.T) {
-//	    ingestion.UnitTestVectorizeAndStore(t, New(embedderRepo, vectorStoreRepo, statusRepo))
+//	    ingestion.UnitTestVectorizeAndStore(t, New(embedderAdapter, vectorStoreAdapter, statusAdapter))
 //	}
 func UnitTestVectorizeAndStore(
 	t *testing.T,
 	svcImp func(
-		embedderRepo ports.EmbedderRepository,
-		vectorStoreRepo ports.VectorStoreRepository,
-		statusRepo ports.StatusRepository,
+		embedderAdapter ports.EmbedderPort,
+		vectorStoreAdapter ports.VectorStorePort,
+		statusAdapter ports.StatusPort,
 	) ports.IngestionService,
 	metadataToContentUtil func(metadata *domains.DatabaseMetadata) []string,
 ) {
 	var (
-		mockEmbedderRepo    *mocks.MockEmbedderRepository
-		mockVectorStoreRepo *mocks.MockVectorStoreRepository
-		mockStatusRepo      *mocks.MockStatusRepository
+		mockEmbedderAdapter    *mocks.MockEmbedderPort
+		mockVectorStoreAdapter *mocks.MockVectorStorePort
+		mockStatusAdapter      *mocks.MockStatusPort
 	)
 
 	mockMetaData := &domains.DatabaseMetadata{
@@ -118,19 +118,19 @@ func UnitTestVectorizeAndStore(
 			name:     "success",
 			metadata: mockMetaData,
 			prepareMock: func() {
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetInProgress(gomock.Any(), mockMetaData.TenantID).
 					Return(nil)
 
-				mockEmbedderRepo.EXPECT().
+				mockEmbedderAdapter.EXPECT().
 					EmbedBatch(gomock.Any(), gomock.Any()).
 					Return(mockVector, nil)
 
-				mockVectorStoreRepo.EXPECT().
+				mockVectorStoreAdapter.EXPECT().
 					Upsert(gomock.Any(), mockMetaData.TenantID, mockVectorEntities).
 					Return(nil)
 
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetDone(gomock.Any(), mockMetaData.TenantID).
 					Return(nil)
 			},
@@ -140,19 +140,19 @@ func UnitTestVectorizeAndStore(
 			name:     "error set status done",
 			metadata: mockMetaData,
 			prepareMock: func() {
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetInProgress(gomock.Any(), mockMetaData.TenantID).
 					Return(nil)
 
-				mockEmbedderRepo.EXPECT().
+				mockEmbedderAdapter.EXPECT().
 					EmbedBatch(gomock.Any(), gomock.Any()).
 					Return(mockVector, nil)
 
-				mockVectorStoreRepo.EXPECT().
+				mockVectorStoreAdapter.EXPECT().
 					Upsert(gomock.Any(), mockMetaData.TenantID, mockVectorEntities).
 					Return(nil)
 
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetDone(gomock.Any(), mockMetaData.TenantID).
 					Return(errors.New("some error"))
 			},
@@ -162,19 +162,19 @@ func UnitTestVectorizeAndStore(
 			name:     "error upsert vector",
 			metadata: mockMetaData,
 			prepareMock: func() {
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetInProgress(gomock.Any(), mockMetaData.TenantID).
 					Return(nil)
 
-				mockEmbedderRepo.EXPECT().
+				mockEmbedderAdapter.EXPECT().
 					EmbedBatch(gomock.Any(), gomock.Any()).
 					Return(mockVector, nil)
 
-				mockVectorStoreRepo.EXPECT().
+				mockVectorStoreAdapter.EXPECT().
 					Upsert(gomock.Any(), mockMetaData.TenantID, mockVectorEntities).
 					Return(errors.New("some error"))
 
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetError(gomock.Any(), mockMetaData.TenantID, errors.New("some error").Error()).
 					Return(nil)
 			},
@@ -184,15 +184,15 @@ func UnitTestVectorizeAndStore(
 			name:     "error embed vector",
 			metadata: mockMetaData,
 			prepareMock: func() {
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetInProgress(gomock.Any(), mockMetaData.TenantID).
 					Return(nil)
 
-				mockEmbedderRepo.EXPECT().
+				mockEmbedderAdapter.EXPECT().
 					EmbedBatch(gomock.Any(), gomock.Any()).
 					Return(nil, errors.New("some error"))
 
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetError(gomock.Any(), mockMetaData.TenantID, errors.New("some error").Error()).
 					Return(nil)
 			},
@@ -202,7 +202,7 @@ func UnitTestVectorizeAndStore(
 			name:     "error status in progress",
 			metadata: mockMetaData,
 			prepareMock: func() {
-				mockStatusRepo.EXPECT().
+				mockStatusAdapter.EXPECT().
 					SetInProgress(gomock.Any(), mockMetaData.TenantID).
 					Return(errors.New("some error"))
 			},
@@ -215,14 +215,14 @@ func UnitTestVectorizeAndStore(
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			mockEmbedderRepo = mocks.NewMockEmbedderRepository(ctrl)
-			mockVectorStoreRepo = mocks.NewMockVectorStoreRepository(ctrl)
-			mockStatusRepo = mocks.NewMockStatusRepository(ctrl)
+			mockEmbedderAdapter = mocks.NewMockEmbedderPort(ctrl)
+			mockVectorStoreAdapter = mocks.NewMockVectorStorePort(ctrl)
+			mockStatusAdapter = mocks.NewMockStatusPort(ctrl)
 
 			svc := svcImp(
-				mockEmbedderRepo,
-				mockVectorStoreRepo,
-				mockStatusRepo,
+				mockEmbedderAdapter,
+				mockVectorStoreAdapter,
+				mockStatusAdapter,
 			)
 
 			if tt.prepareMock != nil {

@@ -11,31 +11,31 @@ import (
 	domains "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
-// MockHashRepository is a mock of HashRepository interface.
-type MockHashRepository struct {
+// MockHashPort is a mock of HashPort interface.
+type MockHashPort struct {
 	ctrl     *gomock.Controller
-	recorder *MockHashRepositoryMockRecorder
+	recorder *MockHashPortMockRecorder
 }
 
-// MockHashRepositoryMockRecorder is the mock recorder for MockHashRepository.
-type MockHashRepositoryMockRecorder struct {
-	mock *MockHashRepository
+// MockHashPortMockRecorder is the mock recorder for MockHashPort.
+type MockHashPortMockRecorder struct {
+	mock *MockHashPort
 }
 
-// NewMockHashRepository creates a new mock instance.
-func NewMockHashRepository(ctrl *gomock.Controller) *MockHashRepository {
-	mock := &MockHashRepository{ctrl: ctrl}
-	mock.recorder = &MockHashRepositoryMockRecorder{mock}
+// NewMockHashPort creates a new mock instance.
+func NewMockHashPort(ctrl *gomock.Controller) *MockHashPort {
+	mock := &MockHashPort{ctrl: ctrl}
+	mock.recorder = &MockHashPortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockHashRepository) EXPECT() *MockHashRepositoryMockRecorder {
+func (m *MockHashPort) EXPECT() *MockHashPortMockRecorder {
 	return m.recorder
 }
 
 // GenerateChecksum mocks base method.
-func (m *MockHashRepository) GenerateChecksum(metadata *domains.DatabaseMetadata) (string, error) {
+func (m *MockHashPort) GenerateChecksum(metadata *domains.DatabaseMetadata) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateChecksum", metadata)
 	ret0, _ := ret[0].(string)
@@ -44,13 +44,13 @@ func (m *MockHashRepository) GenerateChecksum(metadata *domains.DatabaseMetadata
 }
 
 // GenerateChecksum indicates an expected call of GenerateChecksum.
-func (mr *MockHashRepositoryMockRecorder) GenerateChecksum(metadata interface{}) *gomock.Call {
+func (mr *MockHashPortMockRecorder) GenerateChecksum(metadata interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateChecksum", reflect.TypeOf((*MockHashRepository)(nil).GenerateChecksum), metadata)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateChecksum", reflect.TypeOf((*MockHashPort)(nil).GenerateChecksum), metadata)
 }
 
 // GenerateTenantID mocks base method.
-func (m *MockHashRepository) GenerateTenantID(dbUrl string) string {
+func (m *MockHashPort) GenerateTenantID(dbUrl string) string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GenerateTenantID", dbUrl)
 	ret0, _ := ret[0].(string)
@@ -58,7 +58,7 @@ func (m *MockHashRepository) GenerateTenantID(dbUrl string) string {
 }
 
 // GenerateTenantID indicates an expected call of GenerateTenantID.
-func (mr *MockHashRepositoryMockRecorder) GenerateTenantID(dbUrl interface{}) *gomock.Call {
+func (mr *MockHashPortMockRecorder) GenerateTenantID(dbUrl interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTenantID", reflect.TypeOf((*MockHashRepository)(nil).GenerateTenantID), dbUrl)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateTenantID", reflect.TypeOf((*MockHashPort)(nil).GenerateTenantID), dbUrl)
 }

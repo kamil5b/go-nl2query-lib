@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockStatusRepository is a mock of StatusRepository interface.
-type MockStatusRepository struct {
+// MockStatusPort is a mock of StatusPort interface.
+type MockStatusPort struct {
 	ctrl     *gomock.Controller
-	recorder *MockStatusRepositoryMockRecorder
+	recorder *MockStatusPortMockRecorder
 }
 
-// MockStatusRepositoryMockRecorder is the mock recorder for MockStatusRepository.
-type MockStatusRepositoryMockRecorder struct {
-	mock *MockStatusRepository
+// MockStatusPortMockRecorder is the mock recorder for MockStatusPort.
+type MockStatusPortMockRecorder struct {
+	mock *MockStatusPort
 }
 
-// NewMockStatusRepository creates a new mock instance.
-func NewMockStatusRepository(ctrl *gomock.Controller) *MockStatusRepository {
-	mock := &MockStatusRepository{ctrl: ctrl}
-	mock.recorder = &MockStatusRepositoryMockRecorder{mock}
+// NewMockStatusPort creates a new mock instance.
+func NewMockStatusPort(ctrl *gomock.Controller) *MockStatusPort {
+	mock := &MockStatusPort{ctrl: ctrl}
+	mock.recorder = &MockStatusPortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockStatusRepository) EXPECT() *MockStatusRepositoryMockRecorder {
+func (m *MockStatusPort) EXPECT() *MockStatusPortMockRecorder {
 	return m.recorder
 }
 
 // Clear mocks base method.
-func (m *MockStatusRepository) Clear(ctx context.Context, tenantID string) error {
+func (m *MockStatusPort) Clear(ctx context.Context, tenantID string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Clear", ctx, tenantID)
 	ret0, _ := ret[0].(error)
@@ -43,13 +43,13 @@ func (m *MockStatusRepository) Clear(ctx context.Context, tenantID string) error
 }
 
 // Clear indicates an expected call of Clear.
-func (mr *MockStatusRepositoryMockRecorder) Clear(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockStatusPortMockRecorder) Clear(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clear", reflect.TypeOf((*MockStatusRepository)(nil).Clear), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clear", reflect.TypeOf((*MockStatusPort)(nil).Clear), ctx, tenantID)
 }
 
 // GetStatus mocks base method.
-func (m *MockStatusRepository) GetStatus(ctx context.Context, tenantID string) (*string, error) {
+func (m *MockStatusPort) GetStatus(ctx context.Context, tenantID string) (*string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetStatus", ctx, tenantID)
 	ret0, _ := ret[0].(*string)
@@ -58,13 +58,13 @@ func (m *MockStatusRepository) GetStatus(ctx context.Context, tenantID string) (
 }
 
 // GetStatus indicates an expected call of GetStatus.
-func (mr *MockStatusRepositoryMockRecorder) GetStatus(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockStatusPortMockRecorder) GetStatus(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatus", reflect.TypeOf((*MockStatusRepository)(nil).GetStatus), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStatus", reflect.TypeOf((*MockStatusPort)(nil).GetStatus), ctx, tenantID)
 }
 
 // SetDone mocks base method.
-func (m *MockStatusRepository) SetDone(ctx context.Context, tenantID string) error {
+func (m *MockStatusPort) SetDone(ctx context.Context, tenantID string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetDone", ctx, tenantID)
 	ret0, _ := ret[0].(error)
@@ -72,13 +72,13 @@ func (m *MockStatusRepository) SetDone(ctx context.Context, tenantID string) err
 }
 
 // SetDone indicates an expected call of SetDone.
-func (mr *MockStatusRepositoryMockRecorder) SetDone(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockStatusPortMockRecorder) SetDone(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDone", reflect.TypeOf((*MockStatusRepository)(nil).SetDone), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetDone", reflect.TypeOf((*MockStatusPort)(nil).SetDone), ctx, tenantID)
 }
 
 // SetError mocks base method.
-func (m *MockStatusRepository) SetError(ctx context.Context, tenantID, message string) error {
+func (m *MockStatusPort) SetError(ctx context.Context, tenantID, message string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetError", ctx, tenantID, message)
 	ret0, _ := ret[0].(error)
@@ -86,13 +86,13 @@ func (m *MockStatusRepository) SetError(ctx context.Context, tenantID, message s
 }
 
 // SetError indicates an expected call of SetError.
-func (mr *MockStatusRepositoryMockRecorder) SetError(ctx, tenantID, message interface{}) *gomock.Call {
+func (mr *MockStatusPortMockRecorder) SetError(ctx, tenantID, message interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetError", reflect.TypeOf((*MockStatusRepository)(nil).SetError), ctx, tenantID, message)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetError", reflect.TypeOf((*MockStatusPort)(nil).SetError), ctx, tenantID, message)
 }
 
 // SetInProgress mocks base method.
-func (m *MockStatusRepository) SetInProgress(ctx context.Context, tenantID string) error {
+func (m *MockStatusPort) SetInProgress(ctx context.Context, tenantID string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetInProgress", ctx, tenantID)
 	ret0, _ := ret[0].(error)
@@ -100,13 +100,13 @@ func (m *MockStatusRepository) SetInProgress(ctx context.Context, tenantID strin
 }
 
 // SetInProgress indicates an expected call of SetInProgress.
-func (mr *MockStatusRepositoryMockRecorder) SetInProgress(ctx, tenantID interface{}) *gomock.Call {
+func (mr *MockStatusPortMockRecorder) SetInProgress(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetInProgress", reflect.TypeOf((*MockStatusRepository)(nil).SetInProgress), ctx, tenantID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetInProgress", reflect.TypeOf((*MockStatusPort)(nil).SetInProgress), ctx, tenantID)
 }
 
 // SetWarn mocks base method.
-func (m *MockStatusRepository) SetWarn(ctx context.Context, tenantID, message string) error {
+func (m *MockStatusPort) SetWarn(ctx context.Context, tenantID, message string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetWarn", ctx, tenantID, message)
 	ret0, _ := ret[0].(error)
@@ -114,7 +114,7 @@ func (m *MockStatusRepository) SetWarn(ctx context.Context, tenantID, message st
 }
 
 // SetWarn indicates an expected call of SetWarn.
-func (mr *MockStatusRepositoryMockRecorder) SetWarn(ctx, tenantID, message interface{}) *gomock.Call {
+func (mr *MockStatusPortMockRecorder) SetWarn(ctx, tenantID, message interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWarn", reflect.TypeOf((*MockStatusRepository)(nil).SetWarn), ctx, tenantID, message)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetWarn", reflect.TypeOf((*MockStatusPort)(nil).SetWarn), ctx, tenantID, message)
 }

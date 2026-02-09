@@ -46,17 +46,17 @@ Core domain models:
 ### Ports (Interfaces)
 
 External service abstractions:
-- **EmbedderRepository**: Text embedding generation
-- **VectorStoreRepository**: Vector storage and retrieval
-- **LLMRepository**: Query generation using language models
-- **ClientDatabaseRepository**: Source database access (SQL/NoSQL)
-- **InternalDatabaseRepository**: Query result persistence
-- **EncryptRepository**: Data encryption/decryption
-- **HashRepository**: Cryptographic hashing
-- **QueryValidatorRepository**: Query validation before execution
-- **TaskQueueRepository**: Async job management
-- **StatusRepository**: Operation status tracking
-- **WorkspaceRepository**: Workspace management
+- **EmbedderPort**: Text embedding generation
+- **VectorStorePort**: Vector storage and retrieval
+- **LLMPort**: Query generation using language models
+- **ClientDatabasePort**: Source database access (SQL/NoSQL)
+- **InternalDatabasePort**: Query result persistence
+- **EncryptPort**: Data encryption/decryption
+- **HashPort**: Cryptographic hashing
+- **QueryValidatorPort**: Query validation before execution
+- **TaskQueuePort**: Async job management
+- **StatusPort**: Operation status tracking
+- **WorkspacePort**: Workspace management
 
 ### Services
 
@@ -134,9 +134,9 @@ This design enables:
 // Create service with injected dependencies
 ingestionService := ingestion.NewIngestionService(
     config,
-    embedderRepo,
-    vectorStoreRepo,
-    statusRepo,
+    embedderAdapter,
+    vectorStoreAdapter,
+    statusAdapter,
 )
 
 // Process natural language queries through the system

@@ -1,6 +1,6 @@
 package ports
 
-type QueryValidatorRepository interface {
+type QueryValidatorPort interface {
 	IsSafe(query string) (bool, error)
 	ContainsDDLDML(query string) bool
 }

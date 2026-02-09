@@ -12,31 +12,31 @@ import (
 	domains "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
-// MockLLMRepository is a mock of LLMRepository interface.
-type MockLLMRepository struct {
+// MockLLMPort is a mock of LLMPort interface.
+type MockLLMPort struct {
 	ctrl     *gomock.Controller
-	recorder *MockLLMRepositoryMockRecorder
+	recorder *MockLLMPortMockRecorder
 }
 
-// MockLLMRepositoryMockRecorder is the mock recorder for MockLLMRepository.
-type MockLLMRepositoryMockRecorder struct {
-	mock *MockLLMRepository
+// MockLLMPortMockRecorder is the mock recorder for MockLLMPort.
+type MockLLMPortMockRecorder struct {
+	mock *MockLLMPort
 }
 
-// NewMockLLMRepository creates a new mock instance.
-func NewMockLLMRepository(ctrl *gomock.Controller) *MockLLMRepository {
-	mock := &MockLLMRepository{ctrl: ctrl}
-	mock.recorder = &MockLLMRepositoryMockRecorder{mock}
+// NewMockLLMPort creates a new mock instance.
+func NewMockLLMPort(ctrl *gomock.Controller) *MockLLMPort {
+	mock := &MockLLMPort{ctrl: ctrl}
+	mock.recorder = &MockLLMPortMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockLLMRepository) EXPECT() *MockLLMRepositoryMockRecorder {
+func (m *MockLLMPort) EXPECT() *MockLLMPortMockRecorder {
 	return m.recorder
 }
 
 // GenerateQuery mocks base method.
-func (m *MockLLMRepository) GenerateQuery(ctx context.Context, prompt string, contexts []domains.Vector, additionalPrompts ...string) (*string, error) {
+func (m *MockLLMPort) GenerateQuery(ctx context.Context, prompt string, contexts []domains.Vector, additionalPrompts ...string) (*string, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{ctx, prompt, contexts}
 	for _, a := range additionalPrompts {
@@ -49,8 +49,8 @@ func (m *MockLLMRepository) GenerateQuery(ctx context.Context, prompt string, co
 }
 
 // GenerateQuery indicates an expected call of GenerateQuery.
-func (mr *MockLLMRepositoryMockRecorder) GenerateQuery(ctx, prompt, contexts interface{}, additionalPrompts ...interface{}) *gomock.Call {
+func (mr *MockLLMPortMockRecorder) GenerateQuery(ctx, prompt, contexts interface{}, additionalPrompts ...interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{ctx, prompt, contexts}, additionalPrompts...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateQuery", reflect.TypeOf((*MockLLMRepository)(nil).GenerateQuery), varargs...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateQuery", reflect.TypeOf((*MockLLMPort)(nil).GenerateQuery), varargs...)
 }

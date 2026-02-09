@@ -7,23 +7,23 @@ type IngestionConfig struct{}
 type IngestionService struct {
 	Config *IngestionConfig
 
-	embedderRepo    ports.EmbedderRepository
-	vectorStoreRepo ports.VectorStoreRepository
-	statusRepo      ports.StatusRepository
+	embedderAdapter    ports.EmbedderPort
+	vectorStoreAdapter ports.VectorStorePort
+	statusAdapter      ports.StatusPort
 }
 
 func NewIngestionService(
 	config *IngestionConfig,
 
-	embedderRepo ports.EmbedderRepository,
-	vectorStoreRepo ports.VectorStoreRepository,
-	statusRepo ports.StatusRepository,
+	embedderAdapter ports.EmbedderPort,
+	vectorStoreAdapter ports.VectorStorePort,
+	statusAdapter ports.StatusPort,
 ) *IngestionService {
 	return &IngestionService{
 		Config: config,
 
-		embedderRepo:    embedderRepo,
-		vectorStoreRepo: vectorStoreRepo,
-		statusRepo:      statusRepo,
+		embedderAdapter:    embedderAdapter,
+		vectorStoreAdapter: vectorStoreAdapter,
+		statusAdapter:      statusAdapter,
 	}
 }
