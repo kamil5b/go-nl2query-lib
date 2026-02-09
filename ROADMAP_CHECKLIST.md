@@ -12,9 +12,9 @@
 - [x] IngestionService.VectorizeAndStoreService unit tests
 - [x] QueryService.PromptToQueryData Unit Tests
 - [x] WorkspaceService.SyncClientDatabase Unit Tests
-- [ ] WorkspaceService.GetByTenantID Unit Tests
-- [ ] WorkspaceService.ListAll Unit Tests
-- [ ] WorkspaceService.Delete Unit Tests
+- [x] WorkspaceService.GetByTenantID Unit Tests
+- [x] WorkspaceService.ListAll Unit Tests
+- [x] WorkspaceService.Delete Unit Tests
 
 ## Phase 3: Core Services - Ingestion 
 - [x] Implement IngestionService Constructor

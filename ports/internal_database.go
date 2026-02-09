@@ -9,6 +9,8 @@ import (
 type InternalDatabasePort interface {
 	Connect(ctx context.Context, dbURL string) error
 	Close() error
+	ListAllWorkspaces(ctx context.Context) ([]*model.Workspace, error)
+	DeleteWorkspaceByTenantID(ctx context.Context, tenantID string) error
 	GetWorkspaceByTenantID(ctx context.Context, tenantID string) (*model.Workspace, error)
 	UpsertWorkspace(ctx context.Context, workspace *model.Workspace) error
 }

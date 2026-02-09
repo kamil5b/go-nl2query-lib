@@ -63,6 +63,20 @@ func (mr *MockInternalDatabasePortMockRecorder) Connect(ctx, dbURL interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockInternalDatabasePort)(nil).Connect), ctx, dbURL)
 }
 
+// DeleteWorkspaceByTenantID mocks base method.
+func (m *MockInternalDatabasePort) DeleteWorkspaceByTenantID(ctx context.Context, tenantID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteWorkspaceByTenantID", ctx, tenantID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteWorkspaceByTenantID indicates an expected call of DeleteWorkspaceByTenantID.
+func (mr *MockInternalDatabasePortMockRecorder) DeleteWorkspaceByTenantID(ctx, tenantID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteWorkspaceByTenantID", reflect.TypeOf((*MockInternalDatabasePort)(nil).DeleteWorkspaceByTenantID), ctx, tenantID)
+}
+
 // GetWorkspaceByTenantID mocks base method.
 func (m *MockInternalDatabasePort) GetWorkspaceByTenantID(ctx context.Context, tenantID string) (*domains.Workspace, error) {
 	m.ctrl.T.Helper()
@@ -76,6 +90,21 @@ func (m *MockInternalDatabasePort) GetWorkspaceByTenantID(ctx context.Context, t
 func (mr *MockInternalDatabasePortMockRecorder) GetWorkspaceByTenantID(ctx, tenantID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWorkspaceByTenantID", reflect.TypeOf((*MockInternalDatabasePort)(nil).GetWorkspaceByTenantID), ctx, tenantID)
+}
+
+// ListAllWorkspaces mocks base method.
+func (m *MockInternalDatabasePort) ListAllWorkspaces(ctx context.Context) ([]*domains.Workspace, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListAllWorkspaces", ctx)
+	ret0, _ := ret[0].([]*domains.Workspace)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListAllWorkspaces indicates an expected call of ListAllWorkspaces.
+func (mr *MockInternalDatabasePortMockRecorder) ListAllWorkspaces(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAllWorkspaces", reflect.TypeOf((*MockInternalDatabasePort)(nil).ListAllWorkspaces), ctx)
 }
 
 // UpsertWorkspace mocks base method.
