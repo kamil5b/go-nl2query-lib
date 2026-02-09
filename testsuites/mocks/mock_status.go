@@ -9,6 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	domains "github.com/kamil5b/go-nl2query-lib/domains"
 )
 
 // MockStatusPort is a mock of StatusPort interface.
@@ -49,12 +50,13 @@ func (mr *MockStatusPortMockRecorder) Clear(ctx, tenantID interface{}) *gomock.C
 }
 
 // GetStatus mocks base method.
-func (m *MockStatusPort) GetStatus(ctx context.Context, tenantID string) (*string, error) {
+func (m *MockStatusPort) GetStatus(ctx context.Context, tenantID string) (domains.WorkspaceStatus, *string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetStatus", ctx, tenantID)
-	ret0, _ := ret[0].(*string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(domains.WorkspaceStatus)
+	ret1, _ := ret[1].(*string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // GetStatus indicates an expected call of GetStatus.

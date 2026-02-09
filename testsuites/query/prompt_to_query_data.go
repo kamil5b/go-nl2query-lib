@@ -46,8 +46,9 @@ func UnitTestPromptToQueryData(
 	mockEncryptedDBUrl := "encrypted_tenant_123"
 	mockURL := "https://database.url/tenant_123"
 	mockContent := "mocked relevant data"
-	mockResult := []map[string]any{
-		{"tenant_id": mockTenantID, "encryptedDBUrl": mockEncryptedDBUrl},
+	mockWorkspace := &domains.Workspace{
+		TenantID:       mockTenantID,
+		EncryptedDBURL: mockEncryptedDBUrl,
 	}
 	mockQueryResultErrSyntax := "```sql SELECT * FROM table; ```"
 	mockQueryResultErr := "SELECT * FROM table;"
@@ -75,7 +76,7 @@ func UnitTestPromptToQueryData(
 				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
-					Return(nil, nil)
+					Return(domains.StatusDone, nil, nil)
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
@@ -83,7 +84,7 @@ func UnitTestPromptToQueryData(
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
-					Return(mockResult, nil)
+					Return(mockWorkspace, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Decrypt(mockEncryptedDBUrl).
@@ -108,7 +109,7 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
-					Return(errors.New("syntax error"))
+					Return(false, errors.New("syntax error"))
 				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
@@ -116,7 +117,7 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErr).
-					Return(nil)
+					Return(true, nil)
 				// End loop
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -133,7 +134,7 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResult).
-					Return(nil)
+					Return(true, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
 					ContainsDDLDML(mockQueryResult).
@@ -141,7 +142,7 @@ func UnitTestPromptToQueryData(
 				mockClientDatabaseAdapter.
 					EXPECT().
 					Execute(gomock.Any(), mockQueryResult).
-					Return(nil, errors.New("execution error"))
+					Return([]map[string]any{{"result": "success"}}, nil)
 			},
 			expectError: nil,
 		},
@@ -152,7 +153,7 @@ func UnitTestPromptToQueryData(
 				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
-					Return(nil, nil)
+					Return(domains.StatusDone, nil, nil)
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
@@ -160,7 +161,7 @@ func UnitTestPromptToQueryData(
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
-					Return(mockResult, nil)
+					Return(mockWorkspace, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Decrypt(mockEncryptedDBUrl).
@@ -185,15 +186,15 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
-					Return(errors.New("syntax error"))
+					Return(false, errors.New("syntax error"))
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
+					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, "syntax error").
 					Return(&mockQueryResultErr, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErr).
-					Return(nil)
+					Return(true, nil)
 				// End loop
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -205,12 +206,12 @@ func UnitTestPromptToQueryData(
 					Return(nil, errors.New("execution error"))
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("execution error").Error()).
+					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, "execution error").
 					Return(&mockQueryResult, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResult).
-					Return(nil)
+					Return(true, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
 					ContainsDDLDML(mockQueryResult).
@@ -225,7 +226,7 @@ func UnitTestPromptToQueryData(
 				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
-					Return(nil, nil)
+					Return(domains.StatusDone, nil, nil)
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
@@ -233,7 +234,7 @@ func UnitTestPromptToQueryData(
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
-					Return(mockResult, nil)
+					Return(mockWorkspace, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Decrypt(mockEncryptedDBUrl).
@@ -258,15 +259,15 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
-					Return(errors.New("syntax error"))
+					Return(false, errors.New("syntax error"))
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
+					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, "syntax error").
 					Return(&mockQueryResultErr, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErr).
-					Return(nil)
+					Return(true, nil)
 				// End loop
 			},
 			expectError: nil,
@@ -278,7 +279,7 @@ func UnitTestPromptToQueryData(
 				mockStatusAdapter.
 					EXPECT().
 					GetStatus(gomock.Any(), mockTenantID).
-					Return(nil, nil)
+					Return(domains.StatusDone, nil, nil)
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					Connect(gomock.Any(), mockTenantID).
@@ -286,7 +287,7 @@ func UnitTestPromptToQueryData(
 				mockInternalDatabaseAdapter.
 					EXPECT().
 					GetWorkspaceByTenantID(gomock.Any(), mockTenantID).
-					Return(mockResult, nil)
+					Return(mockWorkspace, nil)
 				mockEmbedderAdapter.
 					EXPECT().
 					Embed(gomock.Any(), mockString).
@@ -303,7 +304,7 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResultErrSyntax).
-					Return(errors.New("syntax error"))
+					Return(false, errors.New("syntax error"))
 				mockLLMAdapter.
 					EXPECT().
 					GenerateQuery(gomock.Any(), mockString, mockVentorEntity, errors.New("syntax error").Error()).
@@ -311,10 +312,21 @@ func UnitTestPromptToQueryData(
 				mockQueryValidatorAdapter.
 					EXPECT().
 					IsSafe(mockQueryResult).
-					Return(nil)
+					Return(true, nil)
 				// End loop
 			},
 			expectError: nil,
+		},
+		{
+			name:     "error status in progress",
+			withData: false,
+			prepareMock: func() {
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusInProgress, nil, nil)
+			},
+			expectError: ports.StatusInProgressError,
 		},
 	}
 

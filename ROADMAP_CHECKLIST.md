@@ -10,7 +10,7 @@
 - [x] Set up testing framework (testing, testify)
 - [x] Create mock generation scripts (mockgen)
 - [x] IngestionService.VectorizeAndStoreService unit tests
-- [x] QueryService.PromptToQueryData Unit Tests
+- [-] QueryService.PromptToQueryData Unit Tests (in progress: positive case done, negative case pending)
 - [x] WorkspaceService.SyncClientDatabase Unit Tests
 - [ ] WorkspaceService.GetByTenantID Unit Tests
 - [ ] WorkspaceService.ListAll Unit Tests
@@ -114,3 +114,4 @@
 ## Legend
 - [x] Completed
 - [ ] Pending
+- [-] In Progress

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/kamil5b/go-nl2query-lib/domains"
 	"github.com/kamil5b/go-nl2query-lib/ports"
 	"github.com/kamil5b/go-nl2query-lib/testsuites/mocks"
 	"github.com/stretchr/testify/require"
@@ -19,6 +20,7 @@ import (
 func UnitTestSyncClientDatabase(
 	t *testing.T,
 	svcImp func(
+		statusAdapter ports.StatusPort,
 		clientDatabaseAdapter ports.ClientDatabasePort,
 		internalDatabaseAdapter ports.InternalDatabasePort,
 		encryptAdapter ports.EncryptPort,
@@ -27,6 +29,7 @@ func UnitTestSyncClientDatabase(
 	) ports.WorkspaceService,
 ) {
 	var (
+		mockStatusAdapter           *mocks.MockStatusPort
 		mockClientDatabaseAdapter   *mocks.MockClientDatabasePort
 		mockInternalDatabaseAdapter *mocks.MockInternalDatabasePort
 		mockEncryptAdapter          *mocks.MockEncryptPort
@@ -56,6 +59,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -95,6 +102,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -134,6 +145,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -173,6 +188,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -207,6 +226,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -241,6 +264,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -267,6 +294,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -289,6 +320,10 @@ func UnitTestSyncClientDatabase(
 					EXPECT().
 					GenerateTenantID(mockString).
 					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusDone, nil, nil)
 				mockEncryptAdapter.
 					EXPECT().
 					Encrypt(mockString).
@@ -300,6 +335,34 @@ func UnitTestSyncClientDatabase(
 			},
 			expectError: errors.New("err"),
 		},
+		{
+			name: "err get status",
+			prepareMock: func() {
+				mockHashAdapter.
+					EXPECT().
+					GenerateTenantID(mockString).
+					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusError, nil, errors.New("err"))
+			},
+			expectError: errors.New("err"),
+		},
+		{
+			name: "err status in progress",
+			prepareMock: func() {
+				mockHashAdapter.
+					EXPECT().
+					GenerateTenantID(mockString).
+					Return(mockTenantID)
+				mockStatusAdapter.
+					EXPECT().
+					GetStatus(gomock.Any(), mockTenantID).
+					Return(domains.StatusInProgress, nil, nil)
+			},
+			expectError: ports.StatusInProgressError,
+		},
 	}
 
 	for _, tt := range tests {
@@ -307,6 +370,7 @@ func UnitTestSyncClientDatabase(
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
+			mockStatusAdapter = mocks.NewMockStatusPort(ctrl)
 			mockClientDatabaseAdapter = mocks.NewMockClientDatabasePort(ctrl)
 			mockInternalDatabaseAdapter = mocks.NewMockInternalDatabasePort(ctrl)
 			mockEncryptAdapter = mocks.NewMockEncryptPort(ctrl)
@@ -314,6 +378,7 @@ func UnitTestSyncClientDatabase(
 			mockTaskQueuePort = mocks.NewMockTaskQueuePort(ctrl)
 
 			svc := svcImp(
+				mockStatusAdapter,
 				mockClientDatabaseAdapter,
 				mockInternalDatabaseAdapter,
 				mockEncryptAdapter,
