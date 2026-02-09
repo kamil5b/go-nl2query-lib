@@ -1,0 +1,35 @@
+go.work
+go.work.sum
+
+# --- Compiled Binaries ---
+# Typical names for Go binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+# Generic binary output name
+bin/
+dist/
+
+# --- Dependency Management ---
+# Most developers ignore the vendor folder.
+# UNCOMMENT the line below if you do NOT want to commit your dependencies.
+ vendor/
+
+# --- Testing & Coverage ---
+*.test
+*.out
+coverage.txt
+
+# --- Local Configuration & Secrets ---
+.env
+.env.*
+# Ignore developer-specific tool settings
+.idea/
+.vscode/
+*.swp
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
