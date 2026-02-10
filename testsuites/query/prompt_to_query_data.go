@@ -127,7 +127,17 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 1 - still syntax error
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
+					Return(&mockQueryResultErrSyntax, nil)
+				mockQueryValidatorAdapter.
+					EXPECT().
+					IsSafe(mockQueryResultErrSyntax).
+					Return(false, errors.New("syntax error"))
+
+				// Inner loop iteration 2 - still syntax error
+				mockLLMAdapter.
+					EXPECT().
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -137,7 +147,7 @@ func UnitTestPromptToQueryData(
 				// After inner loop - generate with accumulated errors
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErr, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -156,7 +166,7 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 0 - syntax error with execution error from previous attempt
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErr, "execution error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -166,7 +176,17 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 1 - still syntax error
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
+					Return(&mockQueryResultErrSyntax, nil)
+				mockQueryValidatorAdapter.
+					EXPECT().
+					IsSafe(mockQueryResultErrSyntax).
+					Return(false, errors.New("syntax error"))
+
+				// Inner loop iteration 2 - still syntax error
+				mockLLMAdapter.
+					EXPECT().
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -176,7 +196,7 @@ func UnitTestPromptToQueryData(
 				// After inner loop - generate with accumulated errors
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResult, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -242,7 +262,17 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 1 - still syntax error
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
+					Return(&mockQueryResultErrSyntax, nil)
+				mockQueryValidatorAdapter.
+					EXPECT().
+					IsSafe(mockQueryResultErrSyntax).
+					Return(false, errors.New("syntax error"))
+
+				// Inner loop iteration 2 - still syntax error
+				mockLLMAdapter.
+					EXPECT().
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -252,7 +282,7 @@ func UnitTestPromptToQueryData(
 				// After inner loop - generate with accumulated errors
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErr, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -271,7 +301,7 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 0 - syntax error
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErr, "execution error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -281,7 +311,17 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 1 - still syntax error
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
+					Return(&mockQueryResultErrSyntax, nil)
+				mockQueryValidatorAdapter.
+					EXPECT().
+					IsSafe(mockQueryResultErrSyntax).
+					Return(false, errors.New("syntax error"))
+
+				// Inner loop iteration 2 - still syntax error
+				mockLLMAdapter.
+					EXPECT().
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -291,7 +331,7 @@ func UnitTestPromptToQueryData(
 				// After inner loop - generate with accumulated errors (this will be the final query returned)
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -349,7 +389,17 @@ func UnitTestPromptToQueryData(
 				// Inner loop iteration 1 - still syntax error
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
+					Return(&mockQueryResultErrSyntax, nil)
+				mockQueryValidatorAdapter.
+					EXPECT().
+					IsSafe(mockQueryResultErrSyntax).
+					Return(false, errors.New("syntax error"))
+
+				// Inner loop iteration 2 - still syntax error
+				mockLLMAdapter.
+					EXPECT().
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().
@@ -359,7 +409,7 @@ func UnitTestPromptToQueryData(
 				// After inner loop - generate with accumulated errors
 				mockLLMAdapter.
 					EXPECT().
-					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, mockQueryResultErrSyntax, "syntax error").
+					GenerateQuery(gomock.Any(), mockString, mockVectorEntity, gomock.Any()).
 					Return(&mockQueryResultErrSyntax, nil)
 				mockQueryValidatorAdapter.
 					EXPECT().

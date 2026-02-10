@@ -77,7 +77,7 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 
 			// Validate safety
 			isSafe, safeErr := s.queryValidatorAdapter.IsSafe(*query)
-			if safeErr != nil && isSafe {
+			if isSafe && safeErr == nil {
 				break
 			}
 			if safeErr == nil {
