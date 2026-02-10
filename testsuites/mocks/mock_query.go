@@ -36,11 +36,11 @@ func (m *MockQueryService) EXPECT() *MockQueryServiceMockRecorder {
 }
 
 // PromptToQueryData mocks base method.
-func (m *MockQueryService) PromptToQueryData(ctx context.Context, tenantID, prompt string, withData bool) (*domains.Query, string, error) {
+func (m *MockQueryService) PromptToQueryData(ctx context.Context, tenantID, prompt string, withData bool) (*domains.Query, *string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PromptToQueryData", ctx, tenantID, prompt, withData)
 	ret0, _ := ret[0].(*domains.Query)
-	ret1, _ := ret[1].(string)
+	ret1, _ := ret[1].(*string)
 	ret2, _ := ret[2].(error)
 	return ret0, ret1, ret2
 }

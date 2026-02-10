@@ -17,8 +17,14 @@ func TestQueryService_PromptToQueryData(t *testing.T) {
 		vectorStoreAdapter ports.VectorStorePort,
 		LLMAdapter ports.LLMPort,
 		QueryValidator ports.QueryValidatorPort,
+		queryErrorLimit int,
+		executionErrorLimit int,
 	) ports.QueryService {
-		return NewQueryService(nil,
+		return NewQueryService(
+			&QueryConfig{
+				ExecutionRetryLimit: executionErrorLimit,
+				QueryFixAttempts:    queryErrorLimit,
+			},
 			statusAdapter,
 			clientDatabaseAdapter,
 			internalDatabaseAdapter,

@@ -9,7 +9,7 @@ import (
 type ClientDatabasePort interface {
 	Connect(ctx context.Context, dbURL string) error
 	Close() error
-	Execute(ctx context.Context, query string) ([]map[string]any, error)
+	Execute(ctx context.Context, query string) (map[string]any, error)
 	GetDatabaseMetadata(ctx context.Context) (*model.DatabaseMetadata, error)
 	ExecuteDryRun(ctx context.Context, query string) error
 }

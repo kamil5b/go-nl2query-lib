@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/kamil5b/go-nl2query-lib/domains"
@@ -42,7 +43,7 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 		if connErr := s.clientDatabaseAdapter.Connect(ctx, decryptedURL); connErr == nil {
 			clientDBConnected = true
 		} else {
-			warnMsg := ports.QueryServiceWarnUseExistingClientDatabaseError
+			warnMsg := ports.QueryServiceWarnWontExecuteClientDatabaseError
 			warn = &warnMsg
 		}
 	}
@@ -59,78 +60,91 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 		return nil, nil, err
 	}
 
-	// Step 7: Generate query in a loop until safe
+	// Step 7: Generate query with nested retry loops for syntax and execution errors
 	var query *string
-	var lastError string
+	additionalArgs := []string{}
+	// Outer loop: for execution errors
+	for executionIdx := 0; executionIdx < s.Config.ExecutionRetryLimit+1; executionIdx++ {
 
-	for {
-		var generationErr error
-		if lastError == "" {
-			query, generationErr = s.LLMAdapter.GenerateQuery(ctx, prompt, vectors)
-		} else {
-			query, generationErr = s.LLMAdapter.GenerateQuery(ctx, prompt, vectors, lastError)
-		}
-
-		if generationErr != nil {
-			return nil, nil, generationErr
-		}
-
-		// Validate safety
-		isSafe, safeErr := s.queryValidatorAdapter.IsSafe(*query)
-		if safeErr != nil || !isSafe {
-			// Query is not safe, regenerate with error message
-			if safeErr != nil {
-				lastError = safeErr.Error()
-			} else {
-				lastError = "query validation failed"
-			}
-			continue
-		}
-
-		// Query is safe, use it
-		break
-	}
-
-	// Step 8: Execute query if withData is true and client DB is connected
-	if withData && clientDBConnected {
-		for {
-			// Check if query contains DDL/DML
-			if s.queryValidatorAdapter.ContainsDDLDML(*query) {
-				// Contains DDL/DML, don't execute, just return with query
-				break
-			}
-
-			// Execute the query
-			result, execErr := s.clientDatabaseAdapter.Execute(ctx, *query)
-			if execErr == nil {
-				// Execution successful, return with data
-				return &domains.Query{
-					TenantID:    tenantID,
-					ResultQuery: query,
-					ResultData:  convertToMapPtr(result),
-					CreatedAt:   time.Now(),
-					UpdatedAt:   time.Now(),
-				}, nil, nil
-			}
-
-			// Execution failed, try to regenerate query with error
-			execErrMsg := execErr.Error()
-			newQuery, genErr := s.LLMAdapter.GenerateQuery(ctx, prompt, vectors, execErrMsg)
+		// Inner loop: for syntax/validation errors
+		for syntaxIdx := 0; syntaxIdx < s.Config.QueryFixAttempts+1; syntaxIdx++ {
+			// Generate query
+			var genErr error
+			query, genErr = s.LLMAdapter.GenerateQuery(ctx, prompt, vectors, additionalArgs...)
 			if genErr != nil {
 				return nil, nil, genErr
 			}
 
-			// Validate the new query
-			isSafe, safeErr := s.queryValidatorAdapter.IsSafe(*newQuery)
-			if safeErr != nil || !isSafe {
-				// New query validation failed, regenerate again
-				continue
+			// Validate safety
+			isSafe, safeErr := s.queryValidatorAdapter.IsSafe(*query)
+			if safeErr != nil && isSafe {
+				break
 			}
-
-			// New query is safe, use it for next execution attempt
-			query = newQuery
+			if safeErr == nil {
+				safeErr = errors.New("query deemed unsafe by validator")
+			}
+			additionalArgs = []string{*query, safeErr.Error()}
 		}
+		query, err := s.LLMAdapter.GenerateQuery(ctx, prompt, vectors, additionalArgs...)
+		if err != nil {
+			return nil, nil, err
+		}
+		// Validate safety
+		isSafe, safeErr := s.queryValidatorAdapter.IsSafe(*query)
+		if !isSafe && safeErr == nil {
+			safeErr = errors.New("query deemed unsafe by validator")
+		}
+		if safeErr != nil || !isSafe || !withData || !clientDBConnected || query == nil {
+			if safeErr != nil || !isSafe {
+				warnMsg := ports.QueryServiceWarnQueryGeneratedUnsafe
+				warn = &warnMsg
+			}
+			if !clientDBConnected {
+				warnMsg := ports.QueryServiceWarnWontExecuteClientDatabaseError
+				warn = &warnMsg
+			}
+			return &domains.Query{
+				TenantID:    tenantID,
+				ResultQuery: query,
+				CreatedAt:   time.Now(),
+				UpdatedAt:   time.Now(),
+			}, warn, nil
+		}
+
+		// Step 8: Check for DDL/DML and execute if applicable
+		// Check if query contains DDL/DML
+		if s.queryValidatorAdapter.ContainsDDLDML(*query) {
+			// Contains DDL/DML, don't execute, return with warn
+			warnMsg := ports.QueryServiceWarnDDLDMLDetected
+			warn = &warnMsg
+			return &domains.Query{
+				TenantID:    tenantID,
+				ResultQuery: query,
+				CreatedAt:   time.Now(),
+				UpdatedAt:   time.Now(),
+			}, warn, nil
+		}
+
+		// Execute the query
+		result, execErr := s.clientDatabaseAdapter.Execute(ctx, *query)
+		if execErr == nil {
+			// Execution successful, return with data
+			return &domains.Query{
+				TenantID:    tenantID,
+				ResultQuery: query,
+				ResultData:  result,
+				CreatedAt:   time.Now(),
+				UpdatedAt:   time.Now(),
+			}, warn, nil
+		}
+
+		// Execution failed, prepare error for next outer loop iteration
+		additionalArgs = []string{*query, execErr.Error()}
+		// Continue outer loop to retry query generation with execution error
+
 	}
+	warnMsg := ports.QueryServiceWarnQueryGeneratedUnsafe
+	warn = &warnMsg
 
 	// Return success with the generated query
 	return &domains.Query{
@@ -139,12 +153,4 @@ func (s *QueryService) PromptToQueryData(ctx context.Context, tenantID string, p
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}, warn, nil
-}
-
-// convertToMapPtr converts []map[string]any to *map[string]any by taking the first element
-func convertToMapPtr(data []map[string]any) *map[string]any {
-	if len(data) == 0 {
-		return nil
-	}
-	return &data[0]
 }

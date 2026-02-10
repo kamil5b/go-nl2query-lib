@@ -64,10 +64,10 @@ func (mr *MockClientDatabasePortMockRecorder) Connect(ctx, dbURL interface{}) *g
 }
 
 // Execute mocks base method.
-func (m *MockClientDatabasePort) Execute(ctx context.Context, query string) ([]map[string]any, error) {
+func (m *MockClientDatabasePort) Execute(ctx context.Context, query string) (map[string]any, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Execute", ctx, query)
-	ret0, _ := ret[0].([]map[string]any)
+	ret0, _ := ret[0].(map[string]any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

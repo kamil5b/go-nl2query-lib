@@ -2,7 +2,10 @@ package query
 
 import "github.com/kamil5b/go-nl2query-lib/ports"
 
-type QueryConfig struct{}
+type QueryConfig struct {
+	ExecutionRetryLimit int
+	QueryFixAttempts    int
+}
 
 type QueryService struct {
 	Config *QueryConfig

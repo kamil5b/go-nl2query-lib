@@ -10,6 +10,7 @@ const (
 	QueryServiceWarnDDLDMLDetected                 = "DDL or DML statement detected. Query won't be executed."
 	QueryServiceWarnUseExistingClientDatabaseError = "Will using existing stored schema because connection to client database could not be established."
 	QueryServiceWarnWontExecuteClientDatabaseError = "Query won't be executed because connection to client database could not be established."
+	QueryServiceWarnQueryGeneratedUnsafe           = "Query generated but not safe and exceeding configured limit"
 )
 
 type QueryService interface {
